@@ -11,6 +11,8 @@ contract Token {
     uint256 public totalSupply; // A million Ethers. We will represented them in Wei.
     mapping(address => uint256) public balanceOf;
 
+    event Transfer(address indexed from, address indexed to, uint256 value);
+
     constructor(
         string memory _name,
         string memory _symbol,
@@ -25,9 +27,22 @@ contract Token {
         /*
             Give all the tokens to the deployer of the smart contract.
             Here, msg is a global variable.
-            msg.sender refers to the deployer's wallet address
+            msg.sender refers to the deployer's wallet address.
         */
 
         balanceOf[msg.sender] = totalSupply;
+    }
+
+    function transfer(address _to, uint256 _value)
+        public
+        returns (bool success)
+    {
+        require(balanceOf[msg.sender] >= _value);
+        balanceOf[msg.sender] -= _value;
+        balanceOf[_to] += _value;
+
+        emit Transfer(msg.sender, _to, _value);
+
+        return true;
     }
 }
