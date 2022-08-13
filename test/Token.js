@@ -105,4 +105,57 @@ describe("TOKEN", () => {
             });
         });
     });
+
+    describe("3rd Party Token Transfers", () => {
+        beforeEach(async() => {
+            transaction = await deployedToken.approve(exchange.address, ethersToWei(100));
+            result = await transaction.wait();
+        });
+        
+        describe("Success", () => {
+            beforeEach(async() => {
+                /*
+                    Below, we are connecting with the exchange.
+                    Here, we ask the exchange to call transferFrom( ... ).
+                    And then transfer funds to the receiver.
+
+                    Usually, we use only deployedToken.function( ... ), but here, 
+                    we are using deployedToken.connect( ... ).
+
+                    connect( ... ) allows the exchange to call the transferFrom function.
+                */
+                
+                transaction = await deployedToken.connect(exchange).transferFrom(deployer.address, receiver.address, ethersToWei(100));
+                result = await transaction.wait();
+            });
+            
+            it("transfers funds correctly on some 3rd party's behalf", async() => {
+                expect(await deployedToken.balanceOf(deployer.address)).to.equal(ethersToWei(1000000 - 100));
+                expect(await deployedToken.balanceOf(receiver.address)).to.equal(ethersToWei(100));
+            });
+            
+            it("updates allowance of 3rd parties", async() => {
+                expect(await deployedToken.allowance(deployer.address, exchange.address)).to.equal(ethersToWei(0));
+            });
+
+            it(`emits the "Transfer" event with correct details for 3rd party transfers`, async() => {
+                const emittedEvent = result.events[0];
+    
+                expect(emittedEvent.event).to.equal("Transfer");
+                expect(emittedEvent.args.from).to.equal(deployer.address);
+                expect(emittedEvent.args.to).to.equal(receiver.address);
+                expect(emittedEvent.args.value).to.equal(ethersToWei(100));
+            });
+        });
+        
+        describe("Failure", () => {
+            it("rejects insufficient allowance transfer request from 3rd parties", async() => {
+                await expect(deployedToken.connect(exchange).transferFrom(deployer.address, receiver.address, ethersToWei(1000))).to.be.reverted;
+            });
+            
+            it("rejects insufficient funds transfer request from 3rd parties", async() => {
+                await expect(deployedToken.connect(exchange).transferFrom(deployer.address, receiver.address, ethersToWei(100000000000))).to.be.reverted;
+            });
+        });
+    });
 });
