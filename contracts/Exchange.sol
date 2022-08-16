@@ -7,18 +7,33 @@ contract Exchange {
     address public feeAccount;
     uint256 public feePercent;
     
+    /*
+        The mapping down below keeps track of which smart contract's
+        which user has submitted how much of their tokens to the
+        exchange.
+    */
+    
+    mapping(address => mapping(address => uint256)) public balanceOf;
+
+    event Deposit(
+        address smartContract,
+        address user,
+        uint256 amount,
+        uint256 balance 
+    );
+    
     constructor(address _feeAccount, uint256 _feePercent) {
         feeAccount = _feeAccount;
         feePercent = _feePercent;
     }
 
-    function deposit(address _token, uint256 _value)
+    function deposit(address _externalSmartContract, uint256 _value)
         public
     {
         /*
             The deposit( ... ) function will be called by the person
             who wants to deposit their token to the exchange. They 
-            add the address of their contract in the "address _token"
+            add the address of their contract in the "address _externalSmartContract"
             field. So, we will know who wants to transfer their CC
             to the exchange.
 
@@ -35,6 +50,8 @@ contract Exchange {
             transferring.
         */
         
-        Token(_token).transferFrom(msg.sender, address(this), _value);
+        Token(_externalSmartContract).transferFrom(msg.sender, address(this), _value);
+        balanceOf[_externalSmartContract][msg.sender] += _value;
+        emit Deposit(_externalSmartContract, msg.sender,_value, balanceOf[_externalSmartContract][msg.sender]);
     }
 }

@@ -33,8 +33,7 @@ describe("Exchange", () => {
             carried out by user1, not the deployer.
         */
         
-        transaction = await deployedToken.connect(deployer).transfer(user1.address, ethersToWei(100));
-        result = await transaction.wait();
+        await deployedToken.connect(deployer).transfer(user1.address, ethersToWei(100));
     });
     
     it("adds correct account as the feeAccount", async() => {
@@ -46,18 +45,31 @@ describe("Exchange", () => {
     });
 
     describe("Token Deposits", () => {
-        beforeEach(async() => {
-            transaction = await deployedToken.connect(user1).approve(deployedExchange.address, ethersToWei(100));
-            result = await transaction.wait();
+        describe("Success", () => {
+            beforeEach(async() => {
+                await deployedToken.connect(user1).approve(deployedExchange.address, ethersToWei(100));
+                transaction = await deployedExchange.connect(user1).deposit(deployedToken.address, ethersToWei(100));
+                result = await transaction.wait();
+            });
 
-            transaction = await deployedExchange.connect(user1).deposit(deployedToken.address, ethersToWei(100));
-            result = await transaction.wait();
+            it("it tracks token deposits correctly", async() => {
+                expect(await deployedToken.balanceOf(user1.address)).to.equal(ethersToWei(0));
+                expect(await deployedToken.balanceOf(deployedExchange.address)).to.equal(ethersToWei(100));
+                expect(await deployedExchange.balanceOf(deployedToken.address, user1.address)).to.equal(ethersToWei(100));
+            });
+            
+            it(`emits the "Deposit" event correctly`, async() => {
+                expect(result.events[1].args.smartContract).to.equal(deployedToken.address);
+                expect(result.events[1].args.user).to.equal(user1.address);
+                expect(result.events[1].args.amount).to.equal(ethersToWei(100));
+                expect(result.events[1].args.balance).to.equal(ethersToWei(100));
+                expect(result.events[1].event).to.equal("Deposit");
+            });
         });
 
-        describe("Success", () => {
-            it("it tracks token deposits correctly", async() => {
-                expect(await deployedToken.balanceOf(deployedExchange.address)).to.equal(ethersToWei(100));
-                expect(await deployedToken.balanceOf(user1.address)).to.equal(ethersToWei(0));
+        describe("Failure", () => {
+            it("it fails if there is no approval for token deplosit", async() => {
+                await expect(deployedExchange.connect(user1).deposit(deployedToken.address, ethersToWei(100))).to.be.reverted;
             });
         });
     });
