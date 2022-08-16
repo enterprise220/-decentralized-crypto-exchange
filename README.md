@@ -10,9 +10,12 @@ dEx literally stands for "Decentralized Exchange." It is an online exchange whic
 
 Given that this dEx has been built for cryptocurrency trading, therefore, one can only trade digital cryptocurrencies on such an exchange, not the stocks. For the latter, we have stock exchanges as described above in detail.
 
-## Part-01: Building an ERC-20 Token
+## Part-01: Creating a New Cryptocurrency
 
-An exchange can only work if there are some currencies listed to be exchanged on it in the first place. That's why we built an ERC-20 fungible token of our own. This token is essentially our own cryptocurrency that complies with the coding standards and requirements of the Ethereum blockchain. 
+An exchange can only work if there are some currencies listed to be exchanged on it in the first place. That's why we created a smart contract to build an ERC-20 fungible token of our own. This token is essentially our own cryptocurrency that complies with the coding standards of the Ethereum blockchain. 
 
-We used the best coding practices, compliant with the industry standards. Also, we rigorously tested all the token functionality using Chai, Hardhat and JavaScript.
+We used the best coding practices and complied with the industry standards. Also, we rigorously tested all the token functionality using Chai, Hardhat and JavaScript on our local single-node blockchain.
 
+## Part-02: Creating the Decentralized Exchange
+
+[ TO BE CONTINUED .... ]
