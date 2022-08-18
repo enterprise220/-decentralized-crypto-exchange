@@ -3,7 +3,7 @@ const { expect } = require("chai");
 
 describe("Exchange", () => {
     let fetchedExchange, deployedExchange, fetchedToken, deployedToken;
-    let allAccounts, deployer, feeAccount, user1, user2;
+    let allAccounts, deployer, feeAccount, user1;
     let transaction, result;
 
     function ethersToWei(n) {
@@ -15,7 +15,6 @@ describe("Exchange", () => {
         deployer = allAccounts[0]; // 0th account is the deployer by default
         feeAccount = allAccounts[1];
         user1 = allAccounts[2];
-        user2 = allAccounts[3];
 
         fetchedExchange = await ethers.getContractFactory("Exchange");
         deployedExchange = await fetchedExchange.deploy(feeAccount.address, 1);
@@ -52,7 +51,7 @@ describe("Exchange", () => {
                 result = await transaction.wait();
             });
 
-            it("it tracks token deposits correctly", async() => {
+            it("tracks token deposits correctly", async() => {
                 expect(await deployedToken.balanceOf(user1.address)).to.equal(ethersToWei(0));
                 expect(await deployedToken.balanceOf(deployedExchange.address)).to.equal(ethersToWei(100));
                 expect(await deployedExchange.balanceOf(deployedToken.address, user1.address)).to.equal(ethersToWei(100));
@@ -68,8 +67,40 @@ describe("Exchange", () => {
         });
 
         describe("Failure", () => {
-            it("it fails if there is no approval for token deplosit", async() => {
+            it("fails if there is no approval for token deplosit", async() => {
                 await expect(deployedExchange.connect(user1).deposit(deployedToken.address, ethersToWei(100))).to.be.reverted;
+            });
+        });
+    });
+    
+    describe("Token Withdrawal", () => {
+        describe("Success", () => {
+            beforeEach(async() => {
+                await deployedToken.connect(user1).approve(deployedExchange.address, ethersToWei(100));
+                await deployedExchange.connect(user1).deposit(deployedToken.address, ethersToWei(100));
+            });
+
+            it("tracks token withdrawal correctly", async() => {
+                transaction = await deployedExchange.connect(user1).withdraw(deployedToken.address, ethersToWei(100));
+                result = await transaction.wait();
+                
+                expect(await deployedToken.balanceOf(user1.address)).to.equal(ethersToWei(100));
+                expect(await deployedToken.balanceOf(deployedExchange.address)).to.equal(ethersToWei(0));
+                expect(await deployedExchange.balanceOf(deployedToken.address, user1.address)).to.equal(ethersToWei(0));
+            });
+            
+            it(`emits the "Withdrawal" event correctly`, async() => {
+                // expect(result.events[1].args.smartContract).to.equal(deployedToken.address);
+                expect(result.events[1].args.user).to.equal(user1.address);
+                expect(result.events[1].args.amount).to.equal(ethersToWei(100));
+                expect(result.events[1].args.balance).to.equal(ethersToWei(0));
+                expect(result.events[1].event).to.equal("Withdraw");
+            });
+        });
+
+        describe("Failure", () => {
+            it("fails to withdraw without a deposit first", async() => {
+                await expect(deployedExchange.connect(user1).withdraw(deployedToken.address, ethersToWei(100))).to.be.reverted;
             });
         });
     });
