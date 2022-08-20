@@ -4,6 +4,13 @@ pragma solidity ^0.8;
 import "./Token.sol";
 
 contract Exchange {
+
+    /*
+        The deployer of this exchange takes some fee for every trade 
+        that happens on this exchange. Hence, the deployer.address
+        thing is the feeAccount
+    */
+
     address public feeAccount;
     uint256 public feePercent;
     uint256 public orderNumber;
@@ -16,6 +23,7 @@ contract Exchange {
     
     mapping(address => mapping(address => uint256)) public balanceOf;
     mapping(uint256 => _Order) public orders;
+    mapping(uint256 => bool) public cancelledOrders;
 
     struct _Order {
         uint256 id;
@@ -42,6 +50,16 @@ contract Exchange {
     );
     
     event Order(
+        uint256 id,
+        address user,
+        address tokenGive,
+        uint256 amountGive,
+        address tokenGet,
+        uint256 amountGet,
+        uint256 timestamp
+    );
+    
+    event Cancel(
         uint256 id,
         address user,
         address tokenGive,
@@ -92,8 +110,8 @@ contract Exchange {
 
     /*
         The function withdraw( ... ) allows a user to take their 
-        listed crypto out of the exchange, as they no longer want
-        to trade on this exchange.
+        listed crypto out of the exchange before making any orders, 
+        as they no longer want to trade on this exchange.
 
         Why?
 
@@ -147,6 +165,34 @@ contract Exchange {
             _amountGive,
             _tokenGet,
             _amountGet,
+            block.timestamp
+        );
+    }
+
+    function cancelOrder(uint256 _orderID)
+        public
+    {
+        _Order storage fetchedOrder = orders[_orderID];
+        
+        require(
+            fetchedOrder.id == _orderID,
+            "You cancel an order before making it."
+        );
+        
+        require(
+            fetchedOrder.user == msg.sender,
+            "You can only cancel your own orders."
+        );
+        
+        cancelledOrders[_orderID] = true;
+
+        emit Cancel(
+            _orderID,
+            msg.sender,
+            fetchedOrder.tokenGive,
+            fetchedOrder.amountGive,
+            fetchedOrder.tokenGet,
+            fetchedOrder.amountGet,
             block.timestamp
         );
     }
