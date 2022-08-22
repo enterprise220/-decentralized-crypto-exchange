@@ -2,6 +2,7 @@
 
 pragma solidity ^0.8;
 import "./Token.sol";
+import "hardhat/console.sol";
 
 contract Exchange {
 
@@ -49,7 +50,7 @@ contract Exchange {
         uint256 balance 
     );
     
-    event Order(
+    event Make(
         uint256 id,
         address user,
         address tokenGive,
@@ -140,7 +141,7 @@ contract Exchange {
         maker of the trade is trying to cut a deal.
     */
     
-    function makeOrder(address _tokenGive, uint256 _amountGive, address _tokenGet, uint256 _amountGet)
+    function make(address _tokenGive, uint256 _amountGive, address _tokenGet, uint256 _amountGet)
         public
     {
         require(
@@ -158,7 +159,7 @@ contract Exchange {
             block.timestamp
         );
 
-        emit Order(
+        emit Make(
             orderNumber++,
             msg.sender, 
             _tokenGive,
@@ -169,14 +170,14 @@ contract Exchange {
         );
     }
 
-    function cancelOrder(uint256 _orderID)
+    function cancel(uint256 _orderID)
         public
     {
         _Order storage fetchedOrder = orders[_orderID];
         
         require(
             fetchedOrder.id == _orderID,
-            "You cancel an order before making it."
+            "You cannot cancel an order before making it."
         );
         
         require(
@@ -195,5 +196,38 @@ contract Exchange {
             fetchedOrder.amountGet,
             block.timestamp
         );
+    }
+
+    /*
+        We assume that fill( ... ) is always called by user2.
+        So, tokenGive in the actual order is tokenGet for user2.
+        And tokenGet in the actuaal order is tokenGive for user2.
+    */
+    
+    function fill(uint256 _orderID)
+        public
+    {
+        trade(_orderID);
+    }
+    
+    function trade(uint256 _orderID)
+        internal
+    {
+        _Order storage fetchedOrder = orders[_orderID];
+        uint256 feeAmount = (fetchedOrder.amountGet * feePercent) / 100;
+
+        // Swap part 01: user2 => user1
+        
+        balanceOf[fetchedOrder.tokenGet][msg.sender] -= (fetchedOrder.amountGet + feeAmount);
+        balanceOf[fetchedOrder.tokenGet][fetchedOrder.user] += fetchedOrder.amountGet;
+
+        // Fee ... charged by the deployer ... from user2
+        
+        balanceOf[fetchedOrder.tokenGet][feeAccount] += feeAmount;
+        
+        // Swap part 02: user1 => user2
+        
+        balanceOf[fetchedOrder.tokenGive][fetchedOrder.user] -= fetchedOrder.amountGive;
+        balanceOf[fetchedOrder.tokenGive][msg.sender] += fetchedOrder.amountGive;        
     }
 }

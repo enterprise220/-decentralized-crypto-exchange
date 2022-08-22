@@ -1,14 +1,14 @@
-# The Decentralized Cryptocurrency Exchange (dEx)
+# The Decentralized Cryptocurrency Exchange (DEX)
 
 Let us ask ourselves one fundamental question: what is a stock exchange? Well, it is an online marketplace where one can exchange company stocks for fiat currency, like the USD. The entire process is centralized, i.e., a stock broker sits between you and the market and allows / aids you in making your trades.
 
-With this background of the online financial markets in mind, let us try understanding what we have built: a dEx.
+With this background of the online financial markets in mind, let us try understanding what we have built: a DEX.
 
-## dEx: What is It?
+## DEX: What is It?
 
-dEx literally stands for "Decentralized Exchange." It is an online exchange which is not centrally controlled by any brokerage firms, i.e., every trade one makes gets processed by the smart contracts deployed to the blockchain networks, and no human interaction takes place during the trade, ever. Such an automated process, controlled solely by computer code, is much more efficient, trustworthy and transparent. This is all there is to a decentralized exchange at a very fundamental level. Yes, it is that simple.
+DEX literally stands for "Decentralized Exchange." It is an online exchange which is not centrally controlled by any brokerage firms, i.e., every trade one makes gets processed by the smart contracts deployed to the blockchain networks, and no human interaction takes place during the trade, ever. Such an automated process, controlled solely by computer code, is much more efficient, trustworthy and transparent. This is all there is to a decentralized exchange at a very fundamental level. Yes, it is that simple.
 
-Given that this dEx has been built for cryptocurrency trading, therefore, one can only trade digital cryptocurrencies on such an exchange, not the stocks. For the latter, we have stock exchanges as described above in detail.
+Given that this DEX has been built for cryptocurrency trading, therefore, one can only trade digital cryptocurrencies on such an exchange, not the stocks. For the latter, we have stock exchanges as described above in detail.
 
 ## Part-01: Creating a New Cryptocurrency
 
@@ -16,6 +16,22 @@ An exchange can only work if there are some currencies listed to be exchanged on
 
 We used the best coding practices and complied with the industry standards. Also, we rigorously tested all the token functionality using Chai, Hardhat and JavaScript on our local single-node blockchain.
 
-## Part-02: Creating the Decentralized Exchange
+## Part-02: Creating the Decentralized Exchange (DEX)
 
-[ TO BE CONTINUED .... ]
+The heart and soul of the project is the exchange itself. The exchange acts as a platform that allows two unknown parties - bound by the trust in the blockchain's immutability and robustness - two make their trade.
+
+We implemented the following features in our exchange smart contract:
+
+* **deposit( ... ):** The function allows users to deposit their crypto to the exchange. When they do that, their currency will be "listed" on the exchage for trading.
+
+* **withdraw( ... ):** If for some reason after making a deposit they decide to not proceed further, they can easily withdraw their deposited financial assets with a single click.
+
+* **make( ... ):** The function allows users to publicly list the trade that they want to make, i.e., write to the exchange the cryptocurrencies they want to give and receive with their respective quantities.
+
+* **cancel( ... ):** Allows users to cancel their order before somebody fills it on the exchange.
+
+* **fill( ... ):** If a user finds an order listed, they can choose to fulfill it.
+
+* **fee( ... ):** Finally, the exchange has been implemented with the functionality charging 1% fee for all the trades that take place via the smart contracts powering it up.
+
+That's it for the exchange. That's how we implemented the code that enables users to trade their assets on the exchange.

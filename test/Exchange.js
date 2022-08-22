@@ -24,7 +24,7 @@ describe("Exchange", () => {
         user2 = allAccounts[2];
 
         fetchedExchange = await ethers.getContractFactory("Exchange");
-        deployedExchange = await fetchedExchange.deploy(deployer.address, 1);
+        deployedExchange = await fetchedExchange.deploy(deployer.address, 10);
 
         fetchedToken = await ethers.getContractFactory("Token");
         deployedToken1 = await fetchedToken.deploy("Uzair", "UZR", 18, ethersToWei(1000000));
@@ -120,7 +120,7 @@ describe("Exchange", () => {
                 await deployedToken1.connect(user1).approve(deployedExchange.address, ethersToWei(100));
                 await deployedExchange.connect(user1).deposit(deployedToken1.address, ethersToWei(100));
             
-                transaction = await deployedExchange.connect(user1).makeOrder(deployedToken1.address, ethersToWei(1), deployedToken2.address, ethersToWei(1));
+                transaction = await deployedExchange.connect(user1).make(deployedToken1.address, ethersToWei(1), deployedToken2.address, ethersToWei(1));
                 result = await transaction.wait();
             });
 
@@ -129,7 +129,7 @@ describe("Exchange", () => {
             });
             
             it(`emits the "Make Order" event correctly`, async() => {
-                expect(result.events[0].event).to.equal("Order");
+                expect(result.events[0].event).to.equal("Make");
                 expect(result.events[0].args.id).to.equal(0);
                 expect(result.events[0].args.user).to.equal(user1.address);
                 expect(result.events[0].args.amountGive).to.equal(ethersToWei(1));
@@ -144,7 +144,7 @@ describe("Exchange", () => {
             it("fails to make orders with insufficient funds", async() => {
                 await deployedToken1.connect(user1).approve(deployedExchange.address, ethersToWei(10));
                 await deployedExchange.connect(user1).deposit(deployedToken1.address, ethersToWei(10));
-                await expect(deployedExchange.connect(user1).makeOrder(deployedToken1.address, ethersToWei(100), deployedToken2.address, ethersToWei(1))).to.be.reverted;
+                await expect(deployedExchange.connect(user1).make(deployedToken1.address, ethersToWei(100), deployedToken2.address, ethersToWei(1))).to.be.reverted;
             });
         });
     });
@@ -154,8 +154,8 @@ describe("Exchange", () => {
             beforeEach(async() => {
                 await deployedToken1.connect(user1).approve(deployedExchange.address, ethersToWei(100));
                 await deployedExchange.connect(user1).deposit(deployedToken1.address, ethersToWei(100));
-                await deployedExchange.connect(user1).makeOrder(deployedToken1.address, ethersToWei(1), deployedToken2.address, ethersToWei(1));
-                transaction = await deployedExchange.connect(user1).cancelOrder(0);
+                await deployedExchange.connect(user1).make(deployedToken1.address, ethersToWei(1), deployedToken2.address, ethersToWei(1));
+                transaction = await deployedExchange.connect(user1).cancel(0);
                 result = await transaction.wait();
             });
 
@@ -182,12 +182,12 @@ describe("Exchange", () => {
             });
             
             it("prevents cancellation of the order before making it", async() => {
-                await expect(deployedExchange.connect(user1).cancelOrder(99)).to.be.reverted;
+                await expect(deployedExchange.connect(user1).cancel(99)).to.be.reverted;
             });
             
             it("prevents cancellation of somebody's order by other users", async() => {
-                await deployedExchange.connect(user1).makeOrder(deployedToken1.address, ethersToWei(1), deployedToken2.address, ethersToWei(1));
-                await expect(deployedExchange.connect(user2).cancelOrder(0)).to.be.reverted;
+                await deployedExchange.connect(user1).make(deployedToken1.address, ethersToWei(1), deployedToken2.address, ethersToWei(1));
+                await expect(deployedExchange.connect(user2).cancel(0)).to.be.reverted;
             });
         });
     });
