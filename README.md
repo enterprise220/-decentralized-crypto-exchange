@@ -30,8 +30,6 @@ We implemented the following features in our exchange smart contract:
 
 * **cancel( ... ):** Allows users to cancel their order before somebody fills it on the exchange.
 
-* **fill( ... ):** If a user finds an order listed, they can choose to fulfill it.
-
-* **fee( ... ):** Finally, the exchange has been implemented with the functionality charging 1% fee for all the trades that take place via the smart contracts powering it up.
+* **fill( ... ):** If a user finds an order listed, they can choose to fulfill it. When the order is filled, the trade happens. When the trade happens, the exchange gets its 10% cut from the trade.
 
 That's it for the exchange. That's how we implemented the code that enables users to trade their assets on the exchange.
