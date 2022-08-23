@@ -2,7 +2,6 @@
 
 pragma solidity ^0.8;
 import "./Token.sol";
-import "hardhat/console.sol";
 
 contract Exchange {
 
@@ -23,10 +22,11 @@ contract Exchange {
     */
     
     mapping(address => mapping(address => uint256)) public balanceOf;
-    mapping(uint256 => _Order) public orders;
+    mapping(uint256 => Order) public orders;
     mapping(uint256 => bool) public cancelledOrders;
+    mapping(uint256 => bool) public filledOrders;
 
-    struct _Order {
+    struct Order {
         uint256 id;
         address user;
         address tokenGive;
@@ -63,6 +63,17 @@ contract Exchange {
     event Cancel(
         uint256 id,
         address user,
+        address tokenGive,
+        uint256 amountGive,
+        address tokenGet,
+        uint256 amountGet,
+        uint256 timestamp
+    );
+
+    event Trade(
+        uint256 id,
+        address maker,
+        address filler,
         address tokenGive,
         uint256 amountGive,
         address tokenGet,
@@ -149,7 +160,7 @@ contract Exchange {
             "ERROR: Depositted funds are insufficient for this trade to take place."
         );
         
-        orders[orderNumber] = _Order(
+        orders[orderNumber] = Order(
             orderNumber,
             msg.sender, 
             _tokenGive,
@@ -173,16 +184,16 @@ contract Exchange {
     function cancel(uint256 _orderID)
         public
     {
-        _Order storage fetchedOrder = orders[_orderID];
+        Order storage fetchedOrder = orders[_orderID];
         
         require(
             fetchedOrder.id == _orderID,
-            "You cannot cancel an order before making it."
+            "ERROR: You cannot cancel an order before making it."
         );
         
         require(
             fetchedOrder.user == msg.sender,
-            "You can only cancel your own orders."
+            "ERROR: You can only cancel your own orders."
         );
         
         cancelledOrders[_orderID] = true;
@@ -207,27 +218,62 @@ contract Exchange {
     function fill(uint256 _orderID)
         public
     {
-        trade(_orderID);
-    }
-    
-    function trade(uint256 _orderID)
-        internal
-    {
-        _Order storage fetchedOrder = orders[_orderID];
+        Order storage fetchedOrder = orders[_orderID];
         uint256 feeAmount = (fetchedOrder.amountGet * feePercent) / 100;
 
+        require(
+            !cancelledOrders[_orderID],
+            "ERROR: This order has been cancelled by the maker. Therefore, it cannot be filled out."
+        );
+        
+        require(
+            !filledOrders[_orderID],
+            "ERROR: This order has been filled by some other user. Therefore, it cannot be filled out by you now."
+        );
+        
+        require(
+            _orderID >= 0 && _orderID < orderNumber,
+            "ERROR: Not a valid order ID."
+        );
+        
+        require(
+            balanceOf[fetchedOrder.tokenGet][msg.sender] >= fetchedOrder.amountGet + feeAmount,
+            "ERROR: You have to deposit sufficient funds to the exchange for this trade to happen."
+        );
+        
+        executeTrade(_orderID, feeAmount);
+    }
+    
+    function executeTrade(uint256 _orderID, uint256 _feeAmount)
+        internal
+    {
+        Order storage fetchedOrder = orders[_orderID];
+        
         // Swap part 01: user2 => user1
         
-        balanceOf[fetchedOrder.tokenGet][msg.sender] -= (fetchedOrder.amountGet + feeAmount);
+        balanceOf[fetchedOrder.tokenGet][msg.sender] -= (fetchedOrder.amountGet + _feeAmount);
         balanceOf[fetchedOrder.tokenGet][fetchedOrder.user] += fetchedOrder.amountGet;
 
-        // Fee ... charged by the deployer ... from user2
+        // Fee ... charged by the deployer ... from user2 ONLY
         
-        balanceOf[fetchedOrder.tokenGet][feeAccount] += feeAmount;
+        balanceOf[fetchedOrder.tokenGet][feeAccount] += _feeAmount;
         
         // Swap part 02: user1 => user2
         
         balanceOf[fetchedOrder.tokenGive][fetchedOrder.user] -= fetchedOrder.amountGive;
-        balanceOf[fetchedOrder.tokenGive][msg.sender] += fetchedOrder.amountGive;        
+        balanceOf[fetchedOrder.tokenGive][msg.sender] += fetchedOrder.amountGive; 
+
+        emit Trade(
+            _orderID,
+            fetchedOrder.user,
+            msg.sender,
+            fetchedOrder.tokenGive,
+            fetchedOrder.amountGive,
+            fetchedOrder.tokenGet,
+            fetchedOrder.amountGet,
+            block.timestamp
+        );
+
+        filledOrders[_orderID] = true;
     }
 }
