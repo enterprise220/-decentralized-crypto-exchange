@@ -8,16 +8,16 @@ async function main() {
     const fetchedExchange = await ethers.getContractFactory("Exchange");
 
     // Deploy Contracts
-    const deployedToken = await fetchedToken.deploy("UZAIR", "UZR", 18, 1000000);
+    const deployedToken = await fetchedToken.deploy("UZAIR", "UZR", 18, "1000000");
     await deployedToken.deployed();
     
     const deployedExchange = await fetchedExchange.deploy(accounts[1].address, 10);
     await deployedExchange.deployed();
 
-    const deployedmDAI = await fetchedToken.deploy('mDAI', 'mDAI', 18, 1000000);
+    const deployedmDAI = await fetchedToken.deploy('mDAI', 'mDAI', 18, "1000000");
     await deployedmDAI.deployed();
     
-    const deployedmETH = await fetchedToken.deploy('mETH', 'mETH', 18, 1000000);
+    const deployedmETH = await fetchedToken.deploy('mETH', 'mETH', 18, "1000000");
     await deployedmETH.deployed();
     
     console.log(`Token address: ${ deployedToken.address }`);
