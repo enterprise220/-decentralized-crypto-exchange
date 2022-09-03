@@ -2,15 +2,16 @@ import { useEffect } from "react";
 import { ethers } from "ethers";
 import UZR_ABI from "../abi/Token.json"
 import config from "../config.json";
-import '../App.css';
 
 function App() {    
     async function load() {
         /*
             window: Globally available object to JavaScript
             inside the browsers.
-        
-            MetaMask exposes its API at window.ethereum. We can
+        */
+
+        /*
+            Step-01: MetaMask exposes its API at window.ethereum. We can
             use this API and ask MetaMask to fetch the info about
             the current user.
 
@@ -23,7 +24,7 @@ function App() {
         console.log("MetaMask User Address:", hardhatAccounts);
 
         /*
-            Connect to the blockchain and log the chain ID 
+            Step-02: Connect to the blockchain and log the chain ID 
             in the console as confirmation for the connection.
         */
         
@@ -32,7 +33,7 @@ function App() {
         console.log("Blockchain Network Chain ID:", chainId);
 
         /*
-            Connect to the specific smart contract (our CC)
+            Step-03: Connect to the specific smart contract (our CC)
             on that blockchain and read its symbol as a signal of
             confirmation of connection.
         */
