@@ -13,11 +13,40 @@ function provider(state = {}, action) {
                 ...state,
                 connection: action.connection
             };
+        
+        case "NETWORK_LOADED":
+            return {
+                ...state,
+                chainId: action.chainId
+            };
+        
+        case "ACCOUNT_LOADED":
+            return {
+                ...state,
+                account: action.account
+            };
+        
+        default:
+            return state;
+    }
+}
+
+function token(state = {loaded: false, contract: null}, action) {
+    switch (action.type) {
+        case "TOKEN_LOADED":
+            return {
+                ...state,
+                loaded: true,
+                contract: action.contract,
+                symbol: action.symbol
+            };
+        
         default:
             return state;
     }
 }
 
 export { 
-    provider 
+    provider,
+    token
 }

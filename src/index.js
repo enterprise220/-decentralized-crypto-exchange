@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './components/App';
 import './App.css';
 import store from "./redux/store.js";
-import { Provider } from "react-redux";
+import { Provider as Redux } from "react-redux";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -14,7 +14,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 */
 
 root.render(
-  <Provider store = { store }>
+  <Redux store = { store }>
     <App />
-  </Provider>
+  </Redux>
 );
