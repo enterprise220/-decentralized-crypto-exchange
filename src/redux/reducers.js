@@ -26,19 +26,47 @@ function provider(state = {}, action) {
                 account: action.account
             };
         
+        case "BALANCE_LOADED":
+            return {
+                ...state,
+                balance: action.balance
+            };
+        
         default:
             return state;
     }
 }
 
-function token(state = {loaded: false, contract: null}, action) {
+function cryptoCurrencies(state = { loaded: false, contracts: [], symbols: [] }, action) {
     switch (action.type) {
-        case "TOKEN_LOADED":
+        case "TOKEN_LOADED_1":
             return {
                 ...state,
                 loaded: true,
-                contract: action.contract,
-                symbol: action.symbol
+                contracts: [...state.contracts, action.contract],
+                symbols: [...state.symbols, action.symbol]
+            };
+        
+            case "TOKEN_LOADED_2":
+            return {
+                ...state,
+                loaded: true,
+                contracts: [...state.contracts, action.contract],
+                symbols: [...state.symbols, action.symbol]
+            };
+        
+        default:
+            return state;
+    }
+}
+
+function exchange(state = { loaded: false, exchange: null }, action) {
+    switch (action.type) {
+        case "EXCHANGE_LOADED":
+            return {
+                ...state,
+                loaded: true,
+                exchange: action.exchange
             };
         
         default:
@@ -48,5 +76,6 @@ function token(state = {loaded: false, contract: null}, action) {
 
 export { 
     provider,
-    token
+    cryptoCurrencies,
+    exchange
 }

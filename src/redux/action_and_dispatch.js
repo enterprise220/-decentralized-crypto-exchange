@@ -1,8 +1,8 @@
 import { ethers } from "ethers";
-import UZR_ABI from "../abi/Token.json"
-import config from "../config.json";
+import TOKEN_ABI from "../abi/Token.json";
+import EXCHANGE_ABI from "../abi/Exchange.json";
 
-async function loadAccount(dispatch) {
+async function loadAccount(dispatch, provider) {
     /*
         window: Globally available object to JavaScript
         inside the browsers.
@@ -19,10 +19,19 @@ async function loadAccount(dispatch) {
     */
     
     let account = await window.ethereum.request({ method: "eth_requestAccounts" });
+    account = account[0];
     
     dispatch({
         type: "ACCOUNT_LOADED", 
         account: account
+    });
+    
+    let balance = await provider.getBalance(account);
+    let formattedBalance = ethers.utils.formatEther(balance);
+
+    dispatch({
+        type: "BALANCE_LOADED", 
+        balance: formattedBalance
     });
 
     return account;
@@ -63,21 +72,40 @@ async function loadNetwork(provider, dispatch) {
     return chainId;
 }
 
-async function loadToken(chainID, provider, dispatch) {
+async function loadCryptoCurrencies(addresses, provider, dispatch) {
     /*
         Connect to the specific smart contract (our CC)
         on that blockchain and read its symbol as a signal of
         confirmation of connection.
     */
     
-    let UZR_ADDRESS = config[chainID].UZR.address;
-    let UZR = new ethers.Contract(UZR_ADDRESS, UZR_ABI, provider); // Connect to the token deployed on the blockchain
-    let symbol = await UZR.symbol(); 
+    let token = new ethers.Contract(addresses[0], TOKEN_ABI, provider); // Connect to the token deployed on the blockchain
+    let symbol = await token.symbol();
 
     dispatch({
-        type: "TOKEN_LOADED", 
-        contract: UZR,
+        type: "TOKEN_LOADED_1",
+        contract: token,
         symbol: symbol
+    });
+
+    // Loading token 2 from the blockchain.
+    
+    token = new ethers.Contract(addresses[1], TOKEN_ABI, provider);
+    symbol = await token.symbol();
+
+    dispatch({
+        type: "TOKEN_LOADED_2",
+        contract: token,
+        symbol: symbol
+    });
+}
+
+function loadExchange(address, provider, dispatch) {
+    let exchange = new ethers.Contract(address, EXCHANGE_ABI, provider);
+
+    dispatch({
+        type: "EXCHANGE_LOADED",
+        exchange: exchange,
     });
 }
 
@@ -85,5 +113,6 @@ export {
     loadProvider, 
     loadNetwork,
     loadAccount,
-    loadToken
+    loadCryptoCurrencies, 
+    loadExchange
 };

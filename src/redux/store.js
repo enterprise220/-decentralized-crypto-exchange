@@ -1,11 +1,12 @@
 import { createStore, combineReducers, applyMiddleware } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import thunk from "redux-thunk";
-import { provider, token } from "./reducers";
+import { provider, cryptoCurrencies as CC, exchange } from "./reducers";
 
 let reducer = combineReducers({
     provider, 
-    token
+    CC,
+    exchange
 });
 
 let initialState = {};
