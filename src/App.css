@@ -441,7 +441,7 @@ hr {
 .button span::after {
 	content: '';
 
-	background-image: url('./assets/right-arrow-blue.svg');
+	background-image: url('./assets/img/right-arrow-blue.svg');
 	background-size: contain;
 	background-repeat: no-repeat;
 
@@ -463,7 +463,7 @@ hr {
 }
 
 .button:hover span::after {
-	background-image: url('./assets/right-arrow-white.svg');
+	background-image: url('./assets/img/right-arrow-white.svg');
 	right: -18px;
 }
 
@@ -474,7 +474,7 @@ hr {
 }
 
 .button--filled span::after {
-	background-image: url('./assets/right-arrow-white.svg');
+	background-image: url('./assets/img/right-arrow-white.svg');
 }
 
 .button--filled:hover {

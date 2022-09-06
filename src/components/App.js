@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { loadProvider, loadNetwork, loadAccount, loadCryptoCurrencies, loadExchange } from "../redux/action_and_dispatch.js"
 import config from "../config.json";
+import NavBar from "./NavBar";
 
 function App() {
     const dispatch = useDispatch();
@@ -34,7 +35,7 @@ function App() {
     return (
       <div>
   
-        {/* Navbar */}
+        <NavBar />
   
         <main className='exchange grid'>
           <section className='exchange__section--left grid'>
