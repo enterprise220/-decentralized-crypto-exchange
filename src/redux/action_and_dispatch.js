@@ -2,41 +2,6 @@ import { ethers } from "ethers";
 import TOKEN_ABI from "../abi/Token.json";
 import EXCHANGE_ABI from "../abi/Exchange.json";
 
-async function loadAccount(dispatch, provider) {
-    /*
-        window: Globally available object to JavaScript
-        inside the browsers.
-    */
-
-    /*
-        Step-01: MetaMask exposes its API at window.ethereum. We can
-        use this API and ask MetaMask to fetch the info about
-        the current user.
-
-        MetaMask automatically detects what blockchain this user
-        is connected to, requests the data from the blockchain
-        and, finally, presents it to us in the console.
-    */
-    
-    let account = await window.ethereum.request({ method: "eth_requestAccounts" });
-    account = account[0];
-    
-    dispatch({
-        type: "ACCOUNT_LOADED", 
-        account: account
-    });
-    
-    let balance = await provider.getBalance(account);
-    let formattedBalance = ethers.utils.formatEther(balance);
-
-    dispatch({
-        type: "BALANCE_LOADED", 
-        balance: formattedBalance
-    });
-
-    return account;
-}
-
 function loadProvider(dispatch) {
     /*
         Connect to the blockchain using the provider of ethers.js.
@@ -70,6 +35,41 @@ async function loadNetwork(provider, dispatch) {
     });
 
     return chainId;
+}
+
+async function loadAccount(dispatch, provider) {
+    /*
+        window: Globally available object to JavaScript
+        inside the browsers.
+    */
+
+    /*
+        Step-01: MetaMask exposes its API at window.ethereum. We can
+        use this API and ask MetaMask to fetch the info about
+        the current user.
+
+        MetaMask automatically detects what blockchain this user
+        is connected to, requests the data from the blockchain
+        and, finally, presents it to us in the console.
+    */
+    
+    let account = await window.ethereum.request({ method: "eth_requestAccounts" });
+    account = account[0];
+    
+    dispatch({
+        type: "ACCOUNT_LOADED", 
+        account: account
+    });
+    
+    let balance = await provider.getBalance(account);
+    let formattedBalance = ethers.utils.formatEther(balance);
+
+    dispatch({
+        type: "BALANCE_LOADED", 
+        balance: formattedBalance
+    });
+
+    return account;
 }
 
 async function loadCryptoCurrencies(addresses, provider, dispatch) {
