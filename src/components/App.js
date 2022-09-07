@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { loadProvider, loadNetwork, loadAccount, loadCryptoCurrencies, loadExchange } from "../redux/action_and_dispatch.js"
+import { loadAccount, loadProvider, loadNetwork, loadCryptoCurrencies, loadExchange } from "../redux/action_and_dispatch.js"
 import config from "../config.json";
 import NavBar from "./NavBar";
 
@@ -11,12 +11,20 @@ function App() {
         // Connect Ethers with the blockchain and get chain ID of the network.
         let provider = loadProvider(dispatch);
         let chainID = await loadNetwork(provider, dispatch);
-
-
-        // Connect MetaMask with blockchain and load user account address and balance.
-        await loadAccount(dispatch, provider);
         
         
+        // Reload page if MetaMask account is changed.
+        window.ethereum.on("accountsChanged", async() => {
+            await loadAccount(dispatch, provider);
+        });
+        
+        
+        // Reload page if the network is changed.
+        window.ethereum.on("chainChanged", async() => {
+            window.location.reload();
+        });
+
+
         // Load both cryptocurrencies from the blockchain.
         let uzrAddress = config[chainID].UZR.address;
         let methAddress = config[chainID].mETH.address;
