@@ -3,9 +3,11 @@ import { useDispatch } from "react-redux";
 import { loadAccount, loadProvider, loadNetwork, loadCryptoCurrencies, loadExchange } from "../redux/action_and_dispatch.js"
 import config from "../config.json";
 import NavBar from "./NavBar";
+import Markets from "./Markets";
 
 function App() {
     const dispatch = useDispatch();
+
     
     async function initialSetup() {
         /* 
@@ -51,7 +53,7 @@ function App() {
         <main className='exchange grid'>
           <section className='exchange__section--left grid'>
   
-            {/* Markets */}
+            <Markets />
   
             {/* Balance */}
   

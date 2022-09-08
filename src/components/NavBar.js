@@ -1,6 +1,5 @@
 import logo from "../assets/img/logo.svg";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import truncateEthAddress from 'truncate-eth-address';
 import Blockies from "react-blockies";
 import { loadAccount } from "../redux/action_and_dispatch.js";

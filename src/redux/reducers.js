@@ -43,8 +43,8 @@ function cryptoCurrencies(state = { loaded: false, contracts: [], symbols: [] },
             return {
                 ...state,
                 loaded: true,
-                contracts: [...state.contracts, action.contract],
-                symbols: [...state.symbols, action.symbol]
+                contracts: [action.contract],
+                symbols: [action.symbol]
             };
         
             case "TOKEN_LOADED_2":
