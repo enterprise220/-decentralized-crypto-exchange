@@ -4,10 +4,10 @@ import { loadAccount, loadProvider, loadNetwork, loadCryptoCurrencies, loadExcha
 import config from "../config.json";
 import NavBar from "./NavBar";
 import Markets from "./Markets";
+import Balance from "./Balance.js";
 
 function App() {
     const dispatch = useDispatch();
-
     
     async function initialSetup() {
         /* 
@@ -22,7 +22,7 @@ function App() {
             window.location.reload();
         });
 
-
+ 
         // Connect Ethers with the blockchain and get chain ID of the network.
         let provider = loadProvider(dispatch);
         let chainID = await loadNetwork(provider, dispatch);
@@ -55,7 +55,7 @@ function App() {
   
             <Markets />
   
-            {/* Balance */}
+            <Balance />
   
             {/* Order */}
   

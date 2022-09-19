@@ -23,7 +23,7 @@ const Markets = () => {
                 <h2> Select Markets </h2>
             </div>
             
-            { 
+            {
                 chainID && config[chainID] && config[chainID].UZR && config[chainID].mDAI && config[chainID].mETH
                 ?
                 <select name = "markets" id = "markets" onChange = { switchMarkets }>

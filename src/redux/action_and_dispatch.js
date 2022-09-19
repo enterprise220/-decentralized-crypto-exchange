@@ -1,3 +1,5 @@
+// start from min 27
+
 import { ethers } from "ethers";
 import TOKEN_ABI from "../abi/Token.json";
 import EXCHANGE_ABI from "../abi/Exchange.json";
@@ -109,10 +111,47 @@ function loadExchange(address, provider, dispatch) {
     });
 }
 
+async function loadBalances(cc, exchange, account, dispatch) {
+    let balance = await cc[0].balanceOf(account);
+    balance = ethers.utils.formatUnits(balance, 18);
+
+    dispatch({
+        type: "TOKEN_1_BALANCE_LOADED",
+        balance: balance
+    });
+    
+    balance = await cc[1].balanceOf(account);
+    balance = ethers.utils.formatUnits(balance, 18);
+
+    dispatch({
+        type: "TOKEN_2_BALANCE_LOADED",
+        balance: balance
+    });
+    
+    // For exchange
+
+    balance = await exchange.balanceOf(cc[0].address, account);
+    balance = ethers.utils.formatUnits(balance, 18);
+
+    dispatch({
+        type: "EXCHANGE_USER_1_BALANCE_LOADED",
+        balance: balance
+    });
+    
+    balance = await exchange.balanceOf(cc[1].address, account);
+    balance = ethers.utils.formatUnits(balance, 18);
+
+    dispatch({
+        type: "EXCHANGE_USER_2_BALANCE_LOADED",
+        balance: balance
+    });
+}
+
 export {
     loadProvider, 
     loadNetwork,
     loadAccount,
     loadCryptoCurrencies, 
-    loadExchange
+    loadExchange,
+    loadBalances
 };
