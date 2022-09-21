@@ -33,19 +33,19 @@ async function main() {
   console.log(`Exchange fetched: ${exchange.address}\n`)
 
   // Give tokens to account[1]
-  const sender = accounts[0]
-  const receiver = accounts[1]
-  let amount = tokens(10000)
-
-  // user1 transfers 10,000 mETH...
-  let transaction, result
-  console.log("*************************************************************");
-  transaction = await mETH.connect(sender).transfer(receiver.address, amount)
-  console.log(`Transferred ${amount} tokens from ${sender.address} to ${receiver.address}\n`)
-
-  // Set up exchange users
   const user1 = accounts[0]
   const user2 = accounts[1]
+  let amount = tokens(10000)
+
+  // user1 (account 0) transfers 10,000 mETH to user2 (account 1) ...
+  let transaction, result
+  console.log("*************************************************************");
+  transaction = await mETH.connect(user1).transfer(user2.address, amount)
+  console.log(`Transferred ${amount} tokens from ${user1.address} to ${user2.address}\n`)
+
+  // Set up exchange users
+  // const user1 = accounts[0]
+  // const user2 = accounts[1]
   amount = tokens(10000)
 
   // user1 approves 10,000 UZR...
@@ -53,24 +53,24 @@ async function main() {
   await transaction.wait()
   console.log(`Approved ${amount} tokens from ${user1.address}`)
 
-  // user1 deposits 10,000 UZR...
+  // user1 deposits 10,000 UZR to the exchange...
   transaction = await exchange.connect(user1).deposit(UZR.address, amount)
   await transaction.wait()
   console.log(`Deposited ${amount} Ether from ${user1.address}\n`)
 
-  // User 2 Approves mETH
+  // User 2 Approves 10,000 mETH ...
   transaction = await mETH.connect(user2).approve(exchange.address, amount)
   await transaction.wait()
   console.log(`Approved ${amount} tokens from ${user2.address}`)
 
-  // User 2 Deposits mETH
+  // User 2 Deposits 10,000 mETH to the exchange ...
   transaction = await exchange.connect(user2).deposit(mETH.address, amount)
   await transaction.wait()
   console.log(`Deposited ${amount} tokens from ${user2.address}\n`)
 
   /////////////////////////////////////////////////////////////
   // Seed a Cancelled Order
-  //
+
 
   // User 1 makes order to get tokens
   let orderId
@@ -158,7 +158,6 @@ async function main() {
     // Wait 1 second
     await wait(1)
   }
-
 }
 
 main()

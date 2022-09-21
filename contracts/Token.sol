@@ -26,7 +26,7 @@ contract Token {
         name = _name;
         symbol = _symbol;
         decimals = _decimals;
-        totalSupply = _totalSupply;
+        totalSupply = _totalSupply * (10**decimals);
 
         /*
             Give all the tokens to the deployer of the smart contract.
