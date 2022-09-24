@@ -7,7 +7,8 @@ import { useState } from "react";
 import { transferTokens } from "../redux/action_and_dispatch.js";
 
 const Balance = () => {
-  const [token1ExchangeBalance, setToken1ExchangeBalance] = useState(0);
+  const [ token1ExchangeBalance, setToken1ExchangeBalance ] = useState("0.0000");
+  // const [ formInput, setFormInput ] = useState(0);
   const dispatch = useDispatch();
   
   let symbols = useSelector((state) => {
@@ -38,33 +39,39 @@ const Balance = () => {
     return state.exchange.balances;
   });
 
+  let transferInProgress = useSelector((state) => {
+    return state.exchange.transferInProgress;
+  });
+
   const amountHandler = (e, token) => {
     if (token.address === contracts[0].address) {
       setToken1ExchangeBalance(e.target.value);
     }
   }
 
-  const depositHandler = (e, token) => {
+  const depositHandler = async (e, token) => {
     e.preventDefault();
-        
+
     if (token.address === contracts[0].address) {
-      transferTokens("deposit", token, exchange, provider, token1ExchangeBalance, dispatch);
+      await transferTokens("deposit", token, exchange, provider, token1ExchangeBalance, dispatch);
     }
+
+    setToken1ExchangeBalance("0.0000");
   }
 
   useEffect(() => {
     if (exchange && account && contracts[0] && contracts[1]) {
       loadBalances(contracts, exchange, account, dispatch);
     }
-  }, [exchange, contracts, account, dispatch]);
+  }, [ exchange, contracts, account, dispatch, transferInProgress ]);
 
   return(
     <div className="component exchange__transfers">
       <div className="component__header flex-between">
-        <h2>Balance</h2>
+        <h2> Balance </h2>
         <div className="tabs">
           <button className="tab tab--active">Deposit</button>
-          <button className="tab">Withdraw</button>
+          <button className="tab"> Withdraw </button>
         </div>
       </div>
 
@@ -90,9 +97,17 @@ const Balance = () => {
           </p>
         </div>
 
-        <form autoComplete = "off" onSubmit = { (e) => { depositHandler(e, contracts[0]) } }>
+        <form autoComplete = "off" onSubmit = { 
+          (e) => { 
+            depositHandler(e, contracts[0]) 
+          }}
+        >
           <label htmlFor="token0"><small> Deposit { symbols ? symbols[0] : "" } Amount </small></label>
-          <input type="text" id="token0" placeholder="0.000" onChange = { (e) => { amountHandler(e, contracts[0]) } }/>
+          <input type = "text" id = "token0" value = { token1ExchangeBalance } placeholder = "0.0000" onChange = {
+            (e) => {
+              amountHandler(e, contracts[0]);
+            }}
+          />
 
           <button className="button" type="submit">
             <span> Deposit </span>

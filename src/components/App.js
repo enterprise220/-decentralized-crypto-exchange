@@ -6,6 +6,7 @@ import {
   loadNetwork,
   loadCryptoCurrencies,
   loadExchange,
+  subscribeToEvents
 } from "../redux/action_and_dispatch.js";
 import config from "../config.json";
 import NavBar from "./NavBar";
@@ -40,7 +41,10 @@ function App() {
 
       // Load the exchange from the hardhat blockchain.
       let exchangeAddress = config[chainID].exchange.address;
-      loadExchange(exchangeAddress, provider, dispatch);
+      let exchange = loadExchange(exchangeAddress, provider, dispatch);
+
+      // Listen to events
+      subscribeToEvents(exchange, dispatch);
     }
   }
 

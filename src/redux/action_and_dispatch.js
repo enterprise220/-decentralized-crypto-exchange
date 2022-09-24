@@ -109,6 +109,17 @@ function loadExchange(address, provider, dispatch) {
     type: "EXCHANGE_LOADED",
     exchange: exchange,
   });
+
+  return exchange;
+}
+
+function subscribeToEvents(exchange, dispatch) {
+  exchange.on("Deposit", (smartContract, user, amount, balance, event) => {
+    dispatch({
+      type: "TRANSFER_SUCCESS",
+      event: event
+    });
+  })
 }
 
 async function loadBalances(cc, exchange, account, dispatch) {
@@ -159,14 +170,27 @@ async function loadBalances(cc, exchange, account, dispatch) {
 }
 
 async function transferTokens(transferType, cc, exchange, provider, amount, dispatch) {
-  let signer = provider.getSigner();
-  amount = ethers.utils.parseUnits(amount.toString(), 18);
+  dispatch({
+    type: "TRANSFER_REQUEST"
+  });
   
-  let transaction = await cc.connect(signer).approve(exchange.address, amount);
-  await transaction.wait();
+  try {
+    let signer = provider.getSigner();
+    amount = ethers.utils.parseUnits(amount.toString(), 18);
+    
+    let transaction = await cc.connect(signer).approve(exchange.address, amount);
+    await transaction.wait();
 
-  transaction = await exchange.connect(signer).deposit(cc.address, amount);
-  await transaction.wait();
+    transaction = await exchange.connect(signer).deposit(cc.address, amount);
+    await transaction.wait();
+  }
+  catch(error) {
+    dispatch({
+      type: "TRANSFER_FAILED"
+    });
+  }
+
+  return;
 }
 
 export {
@@ -176,5 +200,6 @@ export {
   loadCryptoCurrencies,
   loadExchange,
   loadBalances,
-  transferTokens
+  transferTokens,
+  subscribeToEvents
 };

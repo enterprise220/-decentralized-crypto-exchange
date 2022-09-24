@@ -42,10 +42,7 @@ function provider(state = {}, action) {
   }
 }
 
-function cryptoCurrencies(
-  state = { loaded: false, contracts: [], symbols: [] },
-  action
-) {
+function cryptoCurrencies(state = { loaded: false, contracts: [], symbols: [] }, action) {
   switch (action.type) {
     case "TOKEN_LOADED_1":
       return {
@@ -80,7 +77,7 @@ function cryptoCurrencies(
   }
 }
 
-function exchange(state = { loaded: false, exchange: null }, action) {
+function exchange(state = { loaded: false, exchange: null, transaction: { isSuccessful: false }, events: [] }, action) {
   switch (action.type) {
     case "EXCHANGE_LOADED":
       return {
@@ -100,6 +97,41 @@ function exchange(state = { loaded: false, exchange: null }, action) {
         ...state,
         balances: [...state.balances, action.balance],
       };
+
+      case "TRANSFER_REQUEST":
+        return {
+          ...state,
+          transaction: {
+            transactionType: "Transfer",
+            isPending: true,
+            isSuccessful: false
+          },
+          transferInProgress: true
+        };
+      
+      case "TRANSFER_SUCCESS":
+        return {
+          ...state,
+          transaction: {
+            transactionType: "Transfer",
+            isPending: false,
+            isSuccessful: true
+          },
+          transferInProgress: false,
+          events: [ action.event, ...state.events ]
+        };
+
+        case "TRANSFER_FAILED":
+          return {
+            ...state,
+            transaction: {
+              transactionType: "Transfer",
+              isPending: false,
+              isSuccessful: false, 
+              isError: true
+            },
+            transferInProgress: false,
+          };
 
     default:
       return state;
