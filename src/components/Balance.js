@@ -1,11 +1,11 @@
 import logo from "../assets/img/logo.svg";
 import logo2 from "../assets/img/eth.svg";
 import { useSelector } from "react-redux";
-import { loadBalances } from "../redux/action_and_dispatch.js";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useState, useRef } from "react";
 import { transferTokens } from "../redux/action_and_dispatch.js";
+import { loadBalances } from "../redux/action_and_dispatch.js";
 
 const Balance = () => {
   const [ token1ExchangeBalance, setToken1ExchangeBalance ] = useState("0.0000");
@@ -57,16 +57,28 @@ const Balance = () => {
     }
   }
 
-  const depositHandler = async (e, token) => {
+  const depositWithdrawHandler = async (e, token) => {
     e.preventDefault();
 
-    if (token.address === contracts[0].address) {
-      await transferTokens("deposit", token, exchange, provider, token1ExchangeBalance, dispatch);
-      setToken1ExchangeBalance("0.0000");
+    if (depositWithdrawButton === "Deposit Funds") {
+      if (token.address === contracts[0].address) {
+        await transferTokens("deposit", token, exchange, provider, token1ExchangeBalance, dispatch);
+        setToken1ExchangeBalance("0.0000");
+      }
+      else {
+        await transferTokens("deposit", token, exchange, provider, token2ExchangeBalance, dispatch);
+        setToken2ExchangeBalance("0.0000");
+      }
     }
     else {
-      await transferTokens("deposit", token, exchange, provider, token2ExchangeBalance, dispatch);
-      setToken2ExchangeBalance("0.0000");
+      if (token.address === contracts[0].address) {
+        await transferTokens("withdraw", token, exchange, provider, token1ExchangeBalance, dispatch);
+        setToken1ExchangeBalance("0.0000");
+      }
+      else {
+        await transferTokens("withdraw", token, exchange, provider, token2ExchangeBalance, dispatch);
+        setToken2ExchangeBalance("0.0000");
+      }
     }
   }
 
@@ -123,7 +135,7 @@ const Balance = () => {
 
         <form autoComplete = "off" onSubmit = { 
           (e) => { 
-            depositHandler(e, contracts[0]) 
+            depositWithdrawHandler(e, contracts[0]) 
           }}
         >
           <label htmlFor="token0"><small> Deposit { symbols ? symbols[0] : "" } Amount </small></label>
@@ -165,7 +177,7 @@ const Balance = () => {
         
         <form autoComplete = "off" onSubmit = { 
           (e) => { 
-            depositHandler(e, contracts[1]) 
+            depositWithdrawHandler(e, contracts[1]) 
           }}
         >
           <label htmlFor="token1"><small> Deposit { symbols ? symbols[1] : "" } Amount </small></label>

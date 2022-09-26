@@ -120,6 +120,12 @@ function subscribeToEvents(exchange, dispatch) {
       event: event
     });
   })
+  exchange.on("Withdraw", (smartContract, user, amount, balance, event) => {
+    dispatch({
+      type: "TRANSFER_SUCCESS",
+      event: event
+    });
+  })
 }
 
 async function loadBalances(cc, exchange, account, dispatch) {
@@ -170,24 +176,46 @@ async function loadBalances(cc, exchange, account, dispatch) {
 }
 
 async function transferTokens(transferType, cc, exchange, provider, amount, dispatch) {
-  dispatch({
-    type: "TRANSFER_REQUEST"
-  });
+  let signer, transaction;
   
-  try {
-    let signer = provider.getSigner();
-    amount = ethers.utils.parseUnits(amount.toString(), 18);
-    
-    let transaction = await cc.connect(signer).approve(exchange.address, amount);
-    await transaction.wait();
-
-    transaction = await exchange.connect(signer).deposit(cc.address, amount);
-    await transaction.wait();
-  }
-  catch(error) {
+  if (transferType === "deposit") {
     dispatch({
-      type: "TRANSFER_FAILED"
+      type: "TRANSFER_REQUEST"
     });
+    
+    try {
+      signer = provider.getSigner();
+      amount = ethers.utils.parseUnits(amount.toString(), 18);
+      
+      transaction = await cc.connect(signer).approve(exchange.address, amount);
+      await transaction.wait();
+  
+      transaction = await exchange.connect(signer).deposit(cc.address, amount);
+      await transaction.wait();
+    }
+    catch(error) {
+      dispatch({
+        type: "TRANSFER_FAILED"
+      });
+    }
+  }
+  else {
+    dispatch({
+      type: "TRANSFER_REQUEST"
+    });
+
+    try {
+      signer = provider.getSigner();
+      amount = ethers.utils.parseUnits(amount.toString(), 18);
+  
+      transaction = await exchange.connect(signer).withdraw(cc.address, amount);
+      await transaction.wait();
+    }
+    catch(error) {
+      dispatch({
+        type: "TRANSFER_FAILED"
+      });
+    }
   }
 
   return;
