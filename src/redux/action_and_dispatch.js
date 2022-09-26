@@ -178,46 +178,31 @@ async function loadBalances(cc, exchange, account, dispatch) {
 async function transferTokens(transferType, cc, exchange, provider, amount, dispatch) {
   let signer, transaction;
   
-  if (transferType === "deposit") {
-    dispatch({
-      type: "TRANSFER_REQUEST"
-    });
-    
-    try {
-      signer = provider.getSigner();
-      amount = ethers.utils.parseUnits(amount.toString(), 18);
-      
+  dispatch({
+    type: "TRANSFER_REQUEST"
+  });
+  
+  try {
+    signer = provider.getSigner();
+    amount = ethers.utils.parseUnits(amount.toString(), 18);
+
+    if (transferType === "deposit") {
       transaction = await cc.connect(signer).approve(exchange.address, amount);
       await transaction.wait();
   
       transaction = await exchange.connect(signer).deposit(cc.address, amount);
       await transaction.wait();
-    }
-    catch(error) {
-      dispatch({
-        type: "TRANSFER_FAILED"
-      });
-    }
-  }
-  else {
-    dispatch({
-      type: "TRANSFER_REQUEST"
-    });
-
-    try {
-      signer = provider.getSigner();
-      amount = ethers.utils.parseUnits(amount.toString(), 18);
-  
+    } 
+    else {
       transaction = await exchange.connect(signer).withdraw(cc.address, amount);
       await transaction.wait();
     }
-    catch(error) {
-      dispatch({
-        type: "TRANSFER_FAILED"
-      });
-    }
   }
-
+  catch(error) {
+    dispatch({
+      type: "TRANSFER_FAILED"
+    });
+  }
   return;
 }
 
