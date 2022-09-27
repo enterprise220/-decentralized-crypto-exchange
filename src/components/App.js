@@ -12,6 +12,7 @@ import config from "../config.json";
 import NavBar from "./NavBar";
 import Markets from "./Markets";
 import Balance from "./Balance.js";
+import Order from "./Order.js";
 
 function App() {
   const dispatch = useDispatch();
@@ -59,22 +60,16 @@ function App() {
       <main className="exchange grid">
         <section className="exchange__section--left grid">
           <Markets />
-
           <Balance />
-
-          {/* Order */}
+          <Order />
         </section>
         <section className="exchange__section--right grid">
           {/* PriceChart */}
-
           {/* Transactions */}
-
           {/* Trades */}
-
           {/* OrderBook */}
         </section>
       </main>
-
       {/* Alert */}
     </div>
   );
