@@ -1,4 +1,6 @@
 import { useState, useRef } from "react";
+import { makeBuyOrder, makeSellOrder } from "../redux/action_and_dispatch.js";
+import { useDispatch, useSelector } from "react-redux";
 
 const Order = () => {
   const [ amount, setAmount ] = useState("0.0000");
@@ -6,11 +8,26 @@ const Order = () => {
   const [ buySellButton, setBuySellButton ] = useState("Buy");
   const buyRef = useRef();
   const sellRef = useRef();
+  const dispatch = useDispatch();
 
-  const submitHandler = (e) => {
+  let exchange = useSelector((state) => {
+    return state.exchange.exchange;
+  });
+
+  let provider = useSelector((state) => {
+    return state.provider.connection;
+  });
+
+  let contracts = useSelector((state) => {
+    return state.CC.contracts;
+  });
+
+  const submitHandler = async (e) => {
     e.preventDefault();
-    console.log(buySellButton);
-    // start from min 16
+    buySellButton === "Buy" ? await makeBuyOrder(contracts, { amount, price }, dispatch, provider, exchange) :  await makeSellOrder(contracts, { amount, price }, dispatch, provider, exchange)
+    setAmount("0.0000");
+    setPrice("0.0000");
+    // start from 5 mins left
   }
   
   const toggleClasses = (e) => {
@@ -38,7 +55,7 @@ const Order = () => {
         </div>
       </div>
 
-      <form autoComplete = "off" onSubmit = { submitHandler }>
+      <form autoComplete = "off" onSubmit = { (e) => submitHandler(e) }>
         <label htmlFor = "amount"><small> { buySellButton } Amount </small></label>
         <input type = "text" id = "amount" value = { amount } onChange = { (e) => setAmount(e.target.value) }
         />

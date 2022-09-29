@@ -119,13 +119,24 @@ function subscribeToEvents(exchange, dispatch) {
       type: "TRANSFER_SUCCESS",
       event: event
     });
-  })
+  });
+
   exchange.on("Withdraw", (smartContract, user, amount, balance, event) => {
     dispatch({
       type: "TRANSFER_SUCCESS",
       event: event
     });
-  })
+  });
+
+  exchange.on("Make", (orderID, user, tokenGive, amountGive, tokenGet, amountGet, time, event) => {
+    let order = event.args;
+
+    dispatch({
+      type: "NEW_ORDER_SUCCESS",
+      event: event,
+      order: order
+    });
+  });
 }
 
 async function loadBalances(cc, exchange, account, dispatch) {
@@ -135,7 +146,7 @@ async function loadBalances(cc, exchange, account, dispatch) {
     cryptocurrency 1 and 2 or not? If yes, their balance
     will be 0.0
   */
-  
+
   let balance = await cc[0].balanceOf(account);
   balance = ethers.utils.formatUnits(balance, 18);
 
@@ -206,6 +217,50 @@ async function transferTokens(transferType, cc, exchange, provider, amount, disp
   return;
 }
 
+async function makeBuyOrder(tokens, order, dispatch, provider, exchange) {
+  let tokenGive = tokens[0].address;
+  let tokenGet = tokens[1].address;
+  let amountGive = ethers.utils.parseUnits(order.amount, 18);
+  let amountGet = ethers.utils.parseUnits((order.amount * order.price).toString(), 18);
+
+  dispatch({
+    type: "NEW_ORDER_REQUEST"
+  });
+
+  try {
+    let signer = provider.getSigner();
+    let transaction = await exchange.connect(signer).make(tokenGive, amountGive, tokenGet, amountGet);
+    await transaction.wait();
+  }
+  catch(error) {
+    dispatch({
+      type: "NEW_ORDER_FAILED"
+    });
+  }
+}
+
+async function makeSellOrder(tokens, order, dispatch, provider, exchange) {
+  let tokenGive = tokens[0].address;
+  let tokenGet = tokens[1].address;
+  let amountGive = ethers.utils.parseUnits(order.amount, 18);
+  let amountGet = ethers.utils.parseUnits((order.amount * order.price).toString(), 18);
+
+  dispatch({
+    type: "NEW_ORDER_REQUEST"
+  });
+
+  try {
+    let signer = provider.getSigner();
+    let transaction = await exchange.connect(signer).make(tokenGive, amountGive, tokenGet, amountGet);
+    await transaction.wait();
+  }
+  catch(error) {
+    dispatch({
+      type: "NEW_ORDER_FAILED"
+    });
+  }
+}
+
 export {
   loadProvider,
   loadNetwork,
@@ -214,5 +269,7 @@ export {
   loadExchange,
   loadBalances,
   transferTokens,
-  subscribeToEvents
+  subscribeToEvents,
+  makeBuyOrder,
+  makeSellOrder
 };

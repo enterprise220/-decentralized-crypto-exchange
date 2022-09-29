@@ -77,7 +77,19 @@ function cryptoCurrencies(state = { loaded: false, contracts: [], symbols: [] },
   }
 }
 
-function exchange(state = { loaded: false, exchange: null, transaction: { isSuccessful: false }, events: [] }, action) {
+let DEFAULT_EXCHANGE_REDUX_STATE = {
+  loaded: false, 
+  exchange: null, 
+  transaction: { 
+    isSuccessful: false 
+  }, 
+  allOrders: { 
+    data: [] 
+  }, 
+  events: [] 
+};
+
+function exchange(state = DEFAULT_EXCHANGE_REDUX_STATE, action) {
   switch (action.type) {
     case "EXCHANGE_LOADED":
       return {
@@ -98,16 +110,21 @@ function exchange(state = { loaded: false, exchange: null, transaction: { isSucc
         balances: [...state.balances, action.balance],
       };
 
-      case "TRANSFER_REQUEST":
-        return {
-          ...state,
-          transaction: {
-            transactionType: "Transfer",
-            isPending: true,
-            isSuccessful: false
-          },
-          transferInProgress: true
-        };
+    /*
+      FOR DEPOSIT AND WITHDRAWAL REQUESTS, 
+      WE DO THE FOLLOWING CASES
+    */
+
+    case "TRANSFER_REQUEST":
+      return {
+        ...state,
+        transaction: {
+          transactionType: "Transfer",
+          isPending: true,
+          isSuccessful: false
+        },
+        transferInProgress: true
+      };
       
       case "TRANSFER_SUCCESS":
         return {
@@ -121,7 +138,7 @@ function exchange(state = { loaded: false, exchange: null, transaction: { isSucc
           events: [ action.event, ...state.events ]
         };
 
-        case "TRANSFER_FAILED":
+      case "TRANSFER_FAILED":
           return {
             ...state,
             transaction: {
@@ -132,6 +149,58 @@ function exchange(state = { loaded: false, exchange: null, transaction: { isSucc
             },
             transferInProgress: false,
           };
+
+      /*
+        FOR BUY AND SELL ORDER REQUESTS, 
+        WE DO THE FOLLOWING CASES
+      */
+
+      case "NEW_ORDER_REQUEST":
+        return {
+          ...state,
+          transaction: {
+            transactionType: "New Order",
+            isPending: true,
+            isSuccessful: false
+          },
+        };
+
+      case "NEW_ORDER_FAILED":
+        return {
+          ...state,
+          transaction: {
+            transactionType: "New Order",
+            isPending: false,
+            isSuccessful: false, 
+            isError: true
+          },
+        };
+
+      case "NEW_ORDER_SUCCESS":
+        /*
+          Prevent duplicate orders.
+        */
+      
+        let data;
+        let index = state.allOrders.data.findIndex((order) => {
+          return(order.id === action.order.id);
+        });
+
+        index === -1 ? data = [ action.order, ...state.allOrders.data ] : data = state.allOrders.data;
+      
+        return {
+          ...state,
+          transaction: {
+            transactionType: "New Order",
+            isPending: false,
+            isSuccessful: true
+          },
+          allOrders: {
+            ...state.allOrders, 
+            data: data
+          },
+          events: [ action.event, ...state.events ]
+        };
 
     default:
       return state;
