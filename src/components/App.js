@@ -13,6 +13,7 @@ import NavBar from "./NavBar";
 import Markets from "./Markets";
 import Balance from "./Balance.js";
 import Order from "./Order.js";
+import Book from "./OrderBook.js";
 
 function App() {
   const dispatch = useDispatch();
@@ -68,6 +69,7 @@ function App() {
           {/* Transactions */}
           {/* Trades */}
           {/* OrderBook */}
+          <Book />
         </section>
       </main>
       {/* Alert */}
