@@ -218,10 +218,10 @@ async function transferTokens(transferType, cc, exchange, provider, amount, disp
 }
 
 async function makeBuyOrder(tokens, order, dispatch, provider, exchange) {
-  let tokenGive = tokens[0].address;
-  let tokenGet = tokens[1].address;
-  let amountGive = ethers.utils.parseUnits(order.amount, 18);
-  let amountGet = ethers.utils.parseUnits((order.amount * order.price).toString(), 18);
+  let tokenGive = tokens[1].address; // Sell mETH or mDAI
+  let tokenGet = tokens[0].address; // Get UZR
+  let amountGive = ethers.utils.parseUnits((order.amount * order.price).toString(), 18);
+  let amountGet = ethers.utils.parseUnits(order.amount, 18);
 
   dispatch({
     type: "NEW_ORDER_REQUEST"
@@ -240,8 +240,8 @@ async function makeBuyOrder(tokens, order, dispatch, provider, exchange) {
 }
 
 async function makeSellOrder(tokens, order, dispatch, provider, exchange) {
-  let tokenGive = tokens[0].address;
-  let tokenGet = tokens[1].address;
+  let tokenGive = tokens[0].address; // Sell UZR
+  let tokenGet = tokens[1].address; // Get mETH or mDAI
   let amountGive = ethers.utils.parseUnits(order.amount, 18);
   let amountGet = ethers.utils.parseUnits((order.amount * order.price).toString(), 18);
 

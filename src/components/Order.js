@@ -27,7 +27,6 @@ const Order = () => {
     buySellButton === "Buy" ? await makeBuyOrder(contracts, { amount, price }, dispatch, provider, exchange) :  await makeSellOrder(contracts, { amount, price }, dispatch, provider, exchange)
     setAmount("0.0000");
     setPrice("0.0000");
-    // start from 5 mins left
   }
   
   const toggleClasses = (e) => {
