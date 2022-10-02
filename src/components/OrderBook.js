@@ -1,4 +1,14 @@
+import { useSelector } from "react-redux";
+import sort from "../assets/img/sort.svg";
+import { orderBookSelector } from "../redux/selectors";
+
 const OrderBook = () => {
+  const symbols = useSelector((state) => {
+    return state.CC.symbols;
+  });
+
+  const orderBook = useSelector(orderBookSelector);
+  
   return (
     <div className="component exchange__orderbook">
       <div className="component__header flex-between">
@@ -10,9 +20,9 @@ const OrderBook = () => {
           <caption>Selling</caption>
           <thead>
             <tr>
-              <th></th>
-              <th></th>
-              <th></th>
+              <th> { symbols && symbols[0] } <img src = { sort } alt = "Sort Img"/> </th>
+              <th> { symbols && symbols[0] } / { symbols && symbols[1] } <img src = { sort } alt = "Sort Img"/> </th>
+              <th> { symbols && symbols[1] } <img src = { sort } alt = "Sort Img"/> </th>
             </tr>
           </thead>
           <tbody>
@@ -30,9 +40,9 @@ const OrderBook = () => {
           <caption>Buying</caption>
           <thead>
             <tr>
-              <th></th>
-              <th></th>
-              <th></th>
+              <th> { symbols && symbols[0] } <img src = { sort } alt = "Sort Img"/> </th>
+              <th> { symbols && symbols[0] } / { symbols && symbols[1] } <img src = { sort } alt = "Sort Img"/> </th>
+              <th> { symbols && symbols[1] } <img src = { sort } alt = "Sort Img"/> </th>
             </tr>
           </thead>
           <tbody>

@@ -183,7 +183,7 @@ function exchange(state = DEFAULT_EXCHANGE_REDUX_STATE, action) {
       
         let data;
         let index = state.allOrders.data.findIndex((order) => {
-          return(order.id === action.order.id);
+          return(order.id.toString() === action.order.id);
         });
 
         index === -1 ? data = [ action.order, ...state.allOrders.data ] : data = state.allOrders.data;
@@ -201,6 +201,15 @@ function exchange(state = DEFAULT_EXCHANGE_REDUX_STATE, action) {
           },
           events: [ action.event, ...state.events ]
         };
+
+      case "ALL_ORDERS_LOADED":
+        return {
+          ...state,
+          allOrders: {
+            loaded: true,
+            data: action.allOrders
+          }
+        }
 
     default:
       return state;

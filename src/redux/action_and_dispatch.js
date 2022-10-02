@@ -261,15 +261,23 @@ async function makeSellOrder(tokens, order, dispatch, provider, exchange) {
   }
 }
 
+async function loadAllOrders(provider, dispatch, exchange) {
+  const block = provider.getBlockNumber();
+  
+  let allOrders = await exchange.queryFilter("Make", 0, block);
+  allOrders = allOrders.map((event) => {
+    return event.args;
+  });
+
+  dispatch({
+    type: "ALL_ORDERS_LOADED", 
+    allOrders: allOrders
+  });
+}
+
 export {
-  loadProvider,
-  loadNetwork,
-  loadAccount,
-  loadCryptoCurrencies,
-  loadExchange,
-  loadBalances,
-  transferTokens,
-  subscribeToEvents,
-  makeBuyOrder,
-  makeSellOrder
+  loadProvider, loadNetwork, loadAccount,
+  loadCryptoCurrencies, loadExchange, loadBalances,
+  transferTokens, subscribeToEvents, makeBuyOrder,
+  makeSellOrder, loadAllOrders
 };

@@ -6,7 +6,8 @@ import {
   loadNetwork,
   loadCryptoCurrencies,
   loadExchange,
-  subscribeToEvents
+  subscribeToEvents,
+  loadAllOrders
 } from "../redux/action_and_dispatch.js";
 import config from "../config.json";
 import NavBar from "./NavBar";
@@ -45,6 +46,9 @@ function App() {
       let exchangeAddress = config[chainID].exchange.address;
       let exchange = loadExchange(exchangeAddress, provider, dispatch);
 
+      // Bring all the orders
+      loadAllOrders(provider, dispatch, exchange);
+      
       // Listen to events
       subscribeToEvents(exchange, dispatch);
     }
