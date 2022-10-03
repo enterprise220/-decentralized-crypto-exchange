@@ -8,6 +8,7 @@ const OrderBook = () => {
   });
 
   const orderBook = useSelector(orderBookSelector);
+  console.log("Order Book:", orderBook);
   
   return (
     <div className="component exchange__orderbook">

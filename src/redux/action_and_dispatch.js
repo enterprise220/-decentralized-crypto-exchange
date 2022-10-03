@@ -264,7 +264,7 @@ async function makeSellOrder(tokens, order, dispatch, provider, exchange) {
 async function loadAllOrders(provider, dispatch, exchange) {
   const block = provider.getBlockNumber();
   
-  let allOrders = await exchange.queryFilter("Make", 0, block);
+  let allOrders = await exchange.queryFilter("Make", 0, block); // Get all "Make" order events
   allOrders = allOrders.map((event) => {
     return event.args;
   });
