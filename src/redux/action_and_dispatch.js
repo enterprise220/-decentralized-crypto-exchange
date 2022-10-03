@@ -264,7 +264,11 @@ async function makeSellOrder(tokens, order, dispatch, provider, exchange) {
 async function loadAllOrders(provider, dispatch, exchange) {
   const block = provider.getBlockNumber();
   
-  let allOrders = await exchange.queryFilter("Make", 0, block); // Get all "Make" order events
+  /*
+    Get all "Make" orders through the "Make" event.
+  */
+  
+  let allOrders = await exchange.queryFilter("Make", 0, block); 
   allOrders = allOrders.map((event) => {
     return event.args;
   });
@@ -272,6 +276,26 @@ async function loadAllOrders(provider, dispatch, exchange) {
   dispatch({
     type: "ALL_ORDERS_LOADED", 
     allOrders: allOrders
+  });
+
+  let cancelledOrders = await exchange.queryFilter("Cancel", 0, block);
+  cancelledOrders = cancelledOrders.map((event) => {
+    return event.args;
+  });
+
+  dispatch({
+    type: "CANCELLED_ORDERS_LOADED", 
+    cancelledOrders: cancelledOrders
+  });
+
+  let trades = await exchange.queryFilter("Trade", 0, block);
+  trades = trades.map((event) => {
+    return event.args;
+  });
+
+  dispatch({
+    type: "FILLED_ORDERS_LOADED", 
+    trades: trades
   });
 }
 

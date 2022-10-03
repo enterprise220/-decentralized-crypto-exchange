@@ -1,15 +1,31 @@
 import { createSelector } from "reselect";
-import { get, groupBy } from "lodash";
+import { get, groupBy, reject } from "lodash";
 import { ethers } from "ethers";
 import moment from "moment";
 
 const tokens = state => get(state, "CC.contracts");
 const allOrders = state => get(state, "exchange.allOrders.data", []);
+const cancelledOrders = state => get(state, "exchange.cancelledOrders.data", []);
+const filledOrders = state => get(state, "exchange.filledOrders.data", []);
 
 const getOrderType = (order, tokens) => {
   return(order.tokenGive === tokens[1].address ? "Buy" : "Sell");
 }
 
+const openOrders = state => {
+  const all = allOrders(state);
+  const filled = filledOrders(state);
+  const cancelled = cancelledOrders(state);
+
+  const openOrders = reject(all, (order) => {
+    const orderFilled = filled.some((o) => o.id.toString() === order.id.toString())
+    const orderCancelled = cancelled.some((o) => o.id.toString() === order.id.toString())
+    return(orderFilled || orderCancelled)
+  })
+
+  return openOrders
+
+}
 const decorateOrder = (order, tokens) => {
   let amountTokenZero, amountTokenOne;
 
@@ -49,7 +65,7 @@ const decorateOrder = (order, tokens) => {
   });
 }
 
-export const orderBookSelector = createSelector(allOrders, tokens, (orders, tokens) => {
+export const orderBookSelector = createSelector(openOrders, tokens, (orders, tokens) => {
   if (!tokens[0] || !tokens[1]) {
     return;
   }
@@ -67,20 +83,13 @@ export const orderBookSelector = createSelector(allOrders, tokens, (orders, toke
     return decorateOrder(singleOrder, tokens);
   });
   
-  // Group decorated orders by "Buy" or "Sell" orders
+  // Group decorated orders by "Buy" or "Sell" orders and sort them
   let groupedOrders = groupBy(allDecoratedOrders, "orderType");
-  let groupedOrdersArray = [groupedOrders["Buy"], groupedOrders["Sell"]];
-  return groupedOrdersArray;
+  let buyOrders = groupedOrders["Buy"];
+  buyOrders = buyOrders && buyOrders.sort((a, b) => b.tokenPrice - a.tokenPrice)
+  let sellOrders = groupedOrders["Sell"];
+  sellOrders = sellOrders && sellOrders.sort((a, b) => b.tokenPrice - a.tokenPrice)
+  let groupedSortedOrders = [sellOrders, buyOrders];
 
-  // let buyOrders = get(orders, "Buy", []);
-  // orders = {
-  //   ...orders,
-  //   buyOrders: buyOrders.sort((a, b) => b.tokenPrice - a.tokenPrice)
-  // }
-  
-  // let sellOrders = get(orders, "Sell", []);
-  // orders = {
-  //   ...orders,
-  //   sellOrders: sellOrders.sort((a, b) => b.tokenPrice - a.tokenPrice)
-  // }
+  return groupedSortedOrders;
 });

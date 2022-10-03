@@ -8,7 +8,14 @@ const OrderBook = () => {
   });
 
   const orderBook = useSelector(orderBookSelector);
-  console.log("Order Book:", orderBook);
+  
+  const filledOrders = useSelector((state) => {
+    return state.exchange.filledOrders.data
+  });
+
+  const cancelledOrders = useSelector((state) => {
+    return state.exchange.cancelledOrders.data
+  });
   
   return (
     <div className="component exchange__orderbook">
@@ -17,7 +24,10 @@ const OrderBook = () => {
       </div>
 
       <div className="flex">
-        <table className="exchange__orderbook--sell">
+        {
+          filledOrders && cancelledOrders && orderBook && orderBook[0] && orderBook[0].length > 0 
+          ?
+          <table className="exchange__orderbook--sell">
           <caption>Selling</caption>
           <thead>
             <tr>
@@ -27,17 +37,28 @@ const OrderBook = () => {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
+            {
+              orderBook[0].map((singleOrder, index) => {
+                return(
+                  <tr key = { singleOrder.id }>
+                    <td> { singleOrder.amountTokenZero } </td>
+                    <td style = {{ color: singleOrder.color }}> { singleOrder.tokenPrice } </td>
+                    <td> { singleOrder.amountTokenOne } </td>
+                  </tr>
+                );
+              })
+            }
           </tbody>
         </table>
+        :
+        "No Sell Orders Placed Yet."
+      }
 
         <div className="divider"></div>
-
-        <table className="exchange__orderbook--buy">
+        {
+          orderBook && orderBook[1] && orderBook[1].length > 0 
+          ?
+          <table className="exchange__orderbook--buy">
           <caption>Buying</caption>
           <thead>
             <tr>
@@ -47,13 +68,22 @@ const OrderBook = () => {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
+            {
+              orderBook[1].map((singleOrder) => {
+                return(
+                  <tr key = { singleOrder.id }>
+                    <td> { singleOrder.amountTokenZero } </td>
+                    <td style = {{ color: singleOrder.color }}> { singleOrder.tokenPrice } </td>
+                    <td> { singleOrder.amountTokenOne } </td>
+                  </tr>
+                );
+              })
+            }
           </tbody>
         </table>
+        :
+        "No Buy Orders Placed Yet."
+        }
       </div>
     </div>
   );

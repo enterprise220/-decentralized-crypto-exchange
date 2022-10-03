@@ -85,7 +85,13 @@ let DEFAULT_EXCHANGE_REDUX_STATE = {
   }, 
   allOrders: { 
     data: [] 
-  }, 
+  },
+  cancelledOrders: { 
+    data: [] 
+  },
+  filledOrders: { 
+    data: [] 
+  },
   events: [] 
 };
 
@@ -186,7 +192,7 @@ function exchange(state = DEFAULT_EXCHANGE_REDUX_STATE, action) {
           return(order.id.toString() === action.order.id);
         });
 
-        index === -1 ? data = [ action.order, ...state.allOrders.data ] : data = state.allOrders.data;
+        index === -1 ? data = state.allOrders.data : data = [ action.order, ...state.allOrders.data ];
       
         return {
           ...state,
@@ -208,6 +214,24 @@ function exchange(state = DEFAULT_EXCHANGE_REDUX_STATE, action) {
           allOrders: {
             loaded: true,
             data: action.allOrders
+          }
+        }
+
+      case "CANCELLED_ORDERS_LOADED":
+        return {
+          ...state,
+          cancelledOrders: {
+            loaded: true,
+            data: action.cancelledOrders
+          }
+        }
+      
+       case "FILLED_ORDERS_LOADED":
+        return {
+          ...state,
+          filledOrders: {
+            loaded: true,
+            data: action.trades
           }
         }
 
