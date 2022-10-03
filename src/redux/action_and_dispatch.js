@@ -100,6 +100,8 @@ async function loadCryptoCurrencies(addresses, provider, dispatch) {
     contract: token,
     symbol: symbol,
   });
+
+  console.log("Out: Load CC");
 }
 
 function loadExchange(address, provider, dispatch) {

@@ -3,6 +3,9 @@ import { get, groupBy, reject } from "lodash";
 import { ethers } from "ethers";
 import moment from "moment";
 
+import { useSelector } from "react-redux";
+
+
 const tokens = state => get(state, "CC.contracts");
 const allOrders = state => get(state, "exchange.allOrders.data", []);
 const cancelledOrders = state => get(state, "exchange.cancelledOrders.data", []);
@@ -52,11 +55,10 @@ const decorateOrder = (order, tokens) => {
   let tokenPrice = amountTokenOne / amountTokenZero;
   tokenPrice = Math.round(tokenPrice * decimalPrecision) / decimalPrecision;
 
-  // Decorating (adding more info) to the basic order object and returning it.
   return({
     ...order, 
-    amountTokenZero: ethers.utils.formatUnits(amountTokenZero, "ether"),
-    amountTokenOne: ethers.utils.formatUnits(amountTokenOne, "ether"),
+    amountTokenZero: amountTokenZero && ethers.utils.formatUnits(amountTokenZero, "ether"),
+    amountTokenOne: amountTokenOne && ethers.utils.formatUnits(amountTokenOne, "ether"),
     tokenPrice: tokenPrice,
     time: moment.unix(order.timestamp).format("h:mm:ssa d MMM D"),
     orderType: getOrderType(order, tokens),

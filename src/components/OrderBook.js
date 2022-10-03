@@ -7,7 +7,7 @@ const OrderBook = () => {
     return state.CC.symbols;
   });
 
-  const orderBook = useSelector(orderBookSelector);
+  let orderBook = useSelector(orderBookSelector);
   
   const filledOrders = useSelector((state) => {
     return state.exchange.filledOrders.data
