@@ -19,13 +19,12 @@ const openOrders = state => {
   const cancelled = cancelledOrders(state);
 
   const openOrders = reject(all, (order) => {
-    const orderFilled = filled.some((o) => o.id.toString() === order.id.toString())
-    const orderCancelled = cancelled.some((o) => o.id.toString() === order.id.toString())
-    return(orderFilled || orderCancelled)
-  })
-
-  return openOrders
-
+    const orderFilled = filled.some((o) => o.id.toString() === order.id.toString());
+    const orderCancelled = cancelled.some((o) => o.id.toString() === order.id.toString());
+    
+    return(orderFilled || orderCancelled);
+  });
+  return openOrders;
 }
 const decorateOrder = (order, tokens) => {
   let amountTokenZero, amountTokenOne;
@@ -54,7 +53,7 @@ const decorateOrder = (order, tokens) => {
   tokenPrice = Math.round(tokenPrice * decimalPrecision) / decimalPrecision;
 
   return({
-    ...order, 
+    ...order,
     amountTokenZero: amountTokenZero && ethers.utils.formatUnits(amountTokenZero, "ether"),
     amountTokenOne: amountTokenOne && ethers.utils.formatUnits(amountTokenOne, "ether"),
     tokenPrice: tokenPrice,
@@ -100,28 +99,25 @@ export const priceChartSelector = createSelector(filledOrders, tokens, (orders, 
   }
 
   // Filter orders by selected tokens
-  orders = orders.filter((o) => o.tokenGet === tokens[0].address || o.tokenGet === tokens[1].address)
-  orders = orders.filter((o) => o.tokenGive === tokens[0].address || o.tokenGive === tokens[1].address)
+  orders = orders.filter((o) => o.tokenGet === tokens[0].address || o.tokenGet === tokens[1].address);
+  orders = orders.filter((o) => o.tokenGive === tokens[0].address || o.tokenGive === tokens[1].address);
 
   // Sort orders by date ascending to compare history
-  orders = orders.sort((a, b) => a.timestamp - b.timestamp)
+  orders = orders.sort((a, b) => a.timestamp - b.timestamp);
 
   // Decorate orders - add display attributes
-  orders = orders.map((o) => decorateOrder(o, tokens))
+  orders = orders.map((o) => decorateOrder(o, tokens));
 
   // Get last 2 order for final price & price change
-  let secondLastOrder, lastOrder
-  [secondLastOrder, lastOrder] = orders.slice(orders.length - 2, orders.length)
-
-  // get last order price
-  const lastPrice = get(lastOrder, 'tokenPrice', 0)
-
-  // get second last order price
-  const secondLastPrice = get(secondLastOrder, 'tokenPrice', 0)
+  let secondLastOrder, lastOrder;
+  [secondLastOrder, lastOrder] = orders.slice(orders.length - 2, orders.length);
+  const lastPrice = get(lastOrder, 'tokenPrice', 0);
+  const secondLastPrice = get(secondLastOrder, 'tokenPrice', 0);
+  let lastPriceChange = lastPrice >= secondLastPrice ? '+' : '-';
 
   return ({
     lastPrice: lastPrice,
-    lastPriceChange: (lastPrice >= secondLastPrice ? '+' : '-'),
+    lastPriceChange: lastPriceChange,
     series: [{
       data: buildGraphData(orders)
     }]
@@ -130,26 +126,26 @@ export const priceChartSelector = createSelector(filledOrders, tokens, (orders, 
 
 const buildGraphData = (orders) => {
   // Group the orders by hour for the graph
-  orders = groupBy(orders, (o) => moment.unix(o.timestamp).startOf('hour').format())
+  orders = groupBy(orders, (o) => moment.unix(o.timestamp).startOf('hour').format());
 
   // Get each hour where data exists
-  const hours = Object.keys(orders)
+  const hours = Object.keys(orders);
 
   // Build the graph series
   const graphData = hours.map((hour) => {
     // Fetch all orders from current hour
-    const group = orders[hour]
+    const group = orders[hour];
 
     // Calculate price values: open, high, low, close
     const open = group[0] // first order, open
-    const high = maxBy(group, 'tokenPrice') // high price
-    const low = minBy(group, 'tokenPrice') // low price
-    const close = group[group.length - 1] // last order, close
+    const high = maxBy(group, 'tokenPrice'); // high price
+    const low = minBy(group, 'tokenPrice'); // low price
+    const close = group[group.length - 1]; // last order, close
 
     return({
       x: new Date(hour),
       y: [open.tokenPrice, high.tokenPrice, low.tokenPrice, close.tokenPrice]
     })
   });
-  return graphData
+  return graphData;
 }

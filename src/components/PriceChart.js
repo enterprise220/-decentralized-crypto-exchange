@@ -52,9 +52,6 @@ const PriceChart = () => {
           text = "You need to connect the DEX with MetaMask."
         />
       }
-
-      {/* Price chart goes here */}
-
     </div>
   );
 }
