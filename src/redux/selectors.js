@@ -26,6 +26,7 @@ const openOrders = state => {
   });
   return openOrders;
 }
+
 const decorateOrder = (order, tokens) => {
   let amountTokenZero, amountTokenOne;
 
@@ -68,14 +69,9 @@ export const orderBookSelector = createSelector(openOrders, tokens, (orders, tok
   if (!tokens[0] || !tokens[1]) {
     return;
   }
- 
-  orders.filter((order) => {
-    return(order.tokenGive === tokens[0].address || order.tokenGet === tokens[0].address);
-  });
 
-  orders.filter((order) => {
-    return(order.tokenGive === tokens[1].address || order.tokenGet === tokens[1].address);
-  });
+  orders = orders.filter((o) => o.tokenGet === tokens[0].address || o.tokenGet === tokens[1].address);
+  orders = orders.filter((o) => o.tokenGive === tokens[0].address || o.tokenGive === tokens[1].address);
 
   // Decorate orders
   let allDecoratedOrders = orders.map((singleOrder) => {
@@ -149,3 +145,22 @@ const buildGraphData = (orders) => {
   });
   return graphData;
 }
+
+export const TradesSelector = createSelector(filledOrders, tokens, (orders, tokens) => {
+  if (!tokens[0] || !tokens[1]) {
+    return;
+  }
+
+  orders = orders.filter((o) => o.tokenGet === tokens[0].address || o.tokenGet === tokens[1].address);
+  orders = orders.filter((o) => o.tokenGive === tokens[0].address || o.tokenGive === tokens[1].address);
+
+  // Decorate orders
+  orders = orders.map((singleOrder) => {
+    return decorateOrder(singleOrder, tokens);
+  });
+
+  // Sort descending (bigger time to smaller time, early in the past to late in the past)
+  orders = orders.sort((a, b) => b.timestamp - a.timestamp);
+
+  return orders;
+});

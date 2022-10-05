@@ -24,7 +24,13 @@ const Order = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    buySellButton === "Buy" ? await makeBuyOrder(contracts, { amount, price }, dispatch, provider, exchange) :  await makeSellOrder(contracts, { amount, price }, dispatch, provider, exchange)
+    
+    buySellButton === "Buy"
+    ?
+    await makeBuyOrder(contracts, { amount, price }, dispatch, provider, exchange)
+    :
+    await makeSellOrder(contracts, { amount, price }, dispatch, provider, exchange)
+    
     setAmount("0.0000");
     setPrice("0.0000");
   }

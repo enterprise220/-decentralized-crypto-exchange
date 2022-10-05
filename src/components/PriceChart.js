@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import ArrowDown from "../assets/img/down-arrow.svg";
 import ArrowUp from "../assets/img/up-arrow.svg";
 import Chart from "react-apexcharts";
-import { options } from "./PriceChart.config";
+import { options, series as dummySeries } from "./PriceChart.config";
 import { priceChartSelector } from "../redux/selectors";
 
 const PriceChart = () => {
@@ -45,7 +45,7 @@ const PriceChart = () => {
           height = "100%"
           width = "100%"
           options = { options }
-          series = { priceChart && priceChart.series }
+          series = { priceChart ? priceChart.series :  dummySeries }
         />
         :
         <Banner
