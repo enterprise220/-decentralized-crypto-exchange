@@ -2,12 +2,12 @@ import { createSelector } from "reselect";
 import { get, groupBy, reject, maxBy, minBy } from "lodash";
 import { ethers } from "ethers";
 import moment from "moment";
-import { useSelector } from "react-redux";
 
 const tokens = state => get(state, "CC.contracts");
 const allOrders = state => get(state, "exchange.allOrders.data", []);
 const cancelledOrders = state => get(state, "exchange.cancelledOrders.data", []);
 const filledOrders = state => get(state, "exchange.filledOrders.data", []);
+const account = state => get(state, "provider.account", undefined);
 
 const getOrderType = (order, tokens) => {
   return(order.tokenGive === tokens[1].address ? "Buy" : "Sell");
@@ -129,6 +129,7 @@ const buildGraphData = (orders) => {
 
   // Build the graph series
   const graphData = hours.map((hour) => {
+    
     // Fetch all orders from current hour
     const group = orders[hour];
 
@@ -163,4 +164,40 @@ export const TradesSelector = createSelector(filledOrders, tokens, (orders, toke
   orders = orders.sort((a, b) => b.timestamp - a.timestamp);
 
   return orders;
+});
+
+export const MyTransactionsSelector = createSelector(openOrders, account, tokens, (orders, account, tokens) => {
+  if (!tokens[0] || !tokens[1]) {
+    return;
+  }
+
+  if (account) {
+    // Get only this account pair's currency
+    orders = orders.filter((o) => o.tokenGet === tokens[0].address || o.tokenGet === tokens[1].address);
+    orders = orders.filter((o) => o.tokenGive === tokens[0].address || o.tokenGive === tokens[1].address);
+
+    // Get only this user's orders
+    orders = orders.filter((singleOrder) => {
+      /*
+        Using ethers.utils.getAddress( ... ), because MetaMask
+        convert actual ETH's address to lower cases. This does not
+        work alright, as CAPS are not equal to lower cases.
+
+        For example: 0xf39f (from MetaMask) is not equal to
+        0xf39F (actual address from Hardhat chain).
+      */
+      
+      return(singleOrder.user === ethers.utils.getAddress(account));
+    });
+
+    // Decorate orders
+    orders = orders.map((singleOrder) => {
+      return decorateOrder(singleOrder, tokens);
+    });
+
+    // Sort orders by date descending to compare history
+    orders = orders.sort((a, b) => b.timestamp - a.timestamp);
+    
+    return orders;
+  }
 });

@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux";
 import { TradesSelector } from "../redux/selectors";
 import Banner from "./Banner";
+import sort from "../assets/img/sort.svg";
 
 const Trades = () => {
   let trades = useSelector(TradesSelector);
@@ -21,8 +22,8 @@ const Trades = () => {
             <thead>
               <tr>
                 <th> Time </th>
-                <th> { symbols[0] } </th>
-                <th> {  symbols[0] } / { symbols[1] } </th>
+                <th> { symbols[0] } <img src = { sort } alt = "Sort" /> </th>
+                <th> {  symbols[0] } / { symbols[1] } <img src = { sort } alt = "Sort" /> </th>
               </tr>
             </thead>
             <tbody>

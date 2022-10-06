@@ -229,9 +229,7 @@ async function makeBuyOrder(tokens, order, dispatch, provider, exchange) {
 
   try {
     let signer = provider.getSigner();
-    console.log("Here!");
     let transaction = await exchange.connect(signer).make(tokenGive, amountGive, tokenGet, amountGet);
-    console.log("Here-02");
     await transaction.wait();
   }
   catch(error) {

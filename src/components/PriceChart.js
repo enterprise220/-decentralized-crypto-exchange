@@ -49,7 +49,7 @@ const PriceChart = () => {
         />
         :
         <Banner
-          text = "You need to connect the DEX with MetaMask."
+          text = "Connect Your Wallet."
         />
       }
     </div>
