@@ -10,6 +10,12 @@ DEX literally stands for "Decentralized Exchange." It is an online exchange whic
 
 Given that this DEX has been built for cryptocurrency trading, therefore, one can only trade digital cryptocurrencies on such an exchange, not the stocks. For the latter, we have stock exchanges as described above in detail.
 
+## The Project Timeline
+
+At first, I learnt the basics of the blockchain technology. I understood the theoretical as well as technical concepts of the 1st, 2nd and 3rd generation blockchains. I also developed a foundation for Solidity, MetaMask, Hardhat and Ethers.js.
+
+After meeting all the pre-requisites I started building the project. It took me **03 months (~ Mid April -- ~ Mid October)** to completely learn the pre-requisites and implement the project locally and deploy it to the Kovan test network.
+
 ## Part-01: Creating a New Cryptocurrency
 
 An exchange can only work if there are some currencies listed to be exchanged on it in the first place. That's why we created a smart contract to build an ERC-20 fungible token of our own. This token is essentially our own cryptocurrency that complies with the coding standards of the Ethereum blockchain. 
@@ -41,13 +47,13 @@ Uptill now, everything that we had done was on the backend, i.e., the custom cry
 
 At the front end, we used React.js, Redux, MetaMask and Ethers.js in order to create a GUI for the customers. The front-end containes the following sections on the page:
 
-* **Blockchain:** An option to change the chain to localhost (Hardhat) or Kovan Test Network
+* **Blockchain:** An option to change the chain to localhost (Hardhat) or Kovan test network
 
 * **Markets:** An option to toggle the trading currency pair from UZR / mETH to UZR / mDAI
 
 * **Metamask Connection:** An option to connect your wallet with the app
 
-* **Balance:** An option to see and change by depositing or withdrawing your cryptocurrency from the exchange
+* **Balance:** An option to see and change your balance (by depositing or withdrawing your cryptocurrency from the exchange) on the GUI
 
 * **Order:** An option to place a new buy order or sell order on the exchange for the whole order
 
@@ -56,3 +62,5 @@ At the front end, we used React.js, Redux, MetaMask and Ethers.js in order to cr
 * **Public Trading History:** An option to see what trades public has made recently.
 
 * **Order Book:** An option to see all open public orders that can be filled by anyone.
+
+* **Candlestick Chart:** A chart that captures the opening, closing, high and low values of the trades for a specific currency pairt (market) at a specific hour. We implementd this using MOMENT library and APEX CHARTS library for React.js.
