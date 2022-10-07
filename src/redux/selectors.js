@@ -65,6 +65,41 @@ const decorateOrder = (order, tokens) => {
   });
 }
 
+const decorateMyTrades = (singleOrder, metamaskActiveUser, tokens) => {
+  if (singleOrder.maker === metamaskActiveUser) { // if I am the maker
+    if (singleOrder.tokenGet === tokens[0].address) { // If I got UZR
+      return({
+        ...singleOrder,
+        tokenZeroTradingColor: "#25CE8F", // then I got UZR
+        arithmeticSign: "+"
+      });
+    }
+    else {
+      return({
+        ...singleOrder,
+        tokenZeroTradingColor: "#F45353", // else I lost UZR
+        arithmeticSign: "-"
+      });
+    }
+  }
+  else { // If I am not the maker
+    if (singleOrder.tokenGet === tokens[0].address) { // somebody else got UZR
+      return({
+        ...singleOrder,
+        tokenZeroTradingColor: "#F45353", // then I lost UZR
+        arithmeticSign: "-"
+      });
+    }
+    else {
+      return({
+        ...singleOrder,
+        tokenZeroTradingColor: "#25CE8F", // else I got UZR
+        arithmeticSign: "+"
+      });
+    }
+  }
+}
+
 export const orderBookSelector = createSelector(openOrders, tokens, (orders, tokens) => {
   if (!tokens[0] || !tokens[1]) {
     return;
@@ -162,7 +197,6 @@ export const TradesSelector = createSelector(filledOrders, tokens, (orders, toke
 
   // Sort descending (bigger time to smaller time, early in the past to late in the past)
   orders = orders.sort((a, b) => b.timestamp - a.timestamp);
-
   return orders;
 });
 
@@ -186,8 +220,9 @@ export const MyTransactionsSelector = createSelector(openOrders, account, tokens
         For example: 0xf39f (from MetaMask) is not equal to
         0xf39F (actual address from Hardhat chain).
       */
-      
-      return(singleOrder.user === ethers.utils.getAddress(account));
+
+      let metamaskActiveUser = ethers.utils.getAddress(account);
+      return(singleOrder.user === metamaskActiveUser);
     });
 
     // Decorate orders
@@ -197,7 +232,39 @@ export const MyTransactionsSelector = createSelector(openOrders, account, tokens
 
     // Sort orders by date descending to compare history
     orders = orders.sort((a, b) => b.timestamp - a.timestamp);
-    
+    return orders;
+  }
+});
+
+export const MyOrdersSelector = createSelector(filledOrders, account, tokens, (orders, account, tokens) => {
+  if (!tokens[0] || !tokens[1]) {
+    return;
+  }
+
+  if (account) {
+    // Get only this account pair's currency
+    orders = orders.filter((o) => o.tokenGet === tokens[0].address || o.tokenGet === tokens[1].address);
+    orders = orders.filter((o) => o.tokenGive === tokens[0].address || o.tokenGive === tokens[1].address);
+
+    // Get only this user's orders
+    orders = orders.filter((singleOrder) => {
+     let metamaskActiveUser = ethers.utils.getAddress(account);
+      return(singleOrder.maker === metamaskActiveUser || singleOrder.filler === metamaskActiveUser);
+    });
+
+    // Decorate orders
+    orders = orders.map((singleOrder) => {
+      return decorateOrder(singleOrder, tokens);
+    });
+
+    // Decorate orders a little bit more
+    let metamaskActiveUser = ethers.utils.getAddress(account);
+    orders = orders.map((singleOrder) => {
+      return decorateMyTrades(singleOrder, metamaskActiveUser, tokens);
+    });
+
+    // Sort orders by date descending to compare history
+    orders = orders.sort((a, b) => b.timestamp - a.timestamp);
     return orders;
   }
 });

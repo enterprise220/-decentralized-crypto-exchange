@@ -28,31 +28,31 @@ const OrderBook = () => {
           filledOrders && cancelledOrders && orderBook && orderBook[0] && orderBook[0].length > 0 
           ?
           <table className="exchange__orderbook--sell">
-          <caption>Selling</caption>
-          <thead>
-            <tr>
-              <th> { symbols && symbols[0] } <img src = { sort } alt = "Sort Img"/> </th>
-              <th> { symbols && symbols[0] } / { symbols && symbols[1] } <img src = { sort } alt = "Sort Img"/> </th>
-              <th> { symbols && symbols[1] } <img src = { sort } alt = "Sort Img"/> </th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              orderBook[0].map((singleOrder, index) => {
-                return(
-                  <tr key = { singleOrder.id }>
-                    <td> { singleOrder.amountTokenZero } </td>
-                    <td style = {{ color: singleOrder.color }}> { singleOrder.tokenPrice } </td>
-                    <td> { singleOrder.amountTokenOne } </td>
-                  </tr>
-                );
-              })
-            }
-          </tbody>
-        </table>
-        :
-        "No Sell Orders Placed Yet."
-      }
+            <caption>Selling</caption>
+            <thead>
+              <tr>
+                <th> { symbols && symbols[0] } <img src = { sort } alt = "Sort Img"/> </th>
+                <th> { symbols && symbols[0] } / { symbols && symbols[1] } <img src = { sort } alt = "Sort Img"/> </th>
+                <th> { symbols && symbols[1] } <img src = { sort } alt = "Sort Img"/> </th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                orderBook[0].map((singleOrder, index) => {
+                  return(
+                    <tr key = { singleOrder.id }>
+                      <td> { singleOrder.amountTokenZero } </td>
+                      <td style = {{ color: singleOrder.color }}> { singleOrder.tokenPrice } </td>
+                      <td> { singleOrder.amountTokenOne } </td>
+                    </tr>
+                  );
+                })
+              }
+            </tbody>
+          </table>
+          :
+          "No Sell Orders Placed Yet."
+        }
 
         <div className="divider"></div>
         {

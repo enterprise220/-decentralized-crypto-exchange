@@ -7,7 +7,7 @@ import {
   loadCryptoCurrencies,
   loadExchange,
   subscribeToEvents,
-  loadAllOrders
+  loadAllOrders,
 } from "../redux/action_and_dispatch.js";
 import config from "../config.json";
 import NavBar from "./NavBar";
@@ -51,7 +51,7 @@ function App() {
 
       // Bring all the orders
       loadAllOrders(provider, dispatch, exchange);
-      
+
       // Listen to events
       subscribeToEvents(exchange, dispatch);
     }
@@ -68,14 +68,18 @@ function App() {
       <main className="exchange grid">
         <section className="exchange__section--left grid">
           <Markets />
+          
           <Balance />
+          
           <Order />
         </section>
         <section className="exchange__section--right grid">
           <PriceChart />
+          
           <MyTransactions />
+          
           <Trades />
-          {/* OrderBook */}
+  
           <Book />
         </section>
       </main>
