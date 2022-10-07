@@ -33,3 +33,26 @@ We implemented the following features in our exchange smart contract:
 * **fill( ... ):** If a user finds an order listed, they can choose to fulfill it. When the order is filled, the trade happens. When the trade happens, the exchange gets its 10% cut from the trade.
 
 That's it for the exchange. That's how we implemented the code that enables users to trade their assets on the exchange.
+
+
+## Part-03: Creating the Front End
+
+Uptill now, everything that we had done was on the backend, i.e., the custom cryptocurrency as well as the crypto exchange were implemented in the form of smart contracts. Now, we moved to the front-end.
+
+At the front end, we used React.js, Redux, MetaMask and Ethers.js in order to create a GUI for the customers. The front-end containes the following sections on the page:
+
+* **Blockchain:** An option to change the chain to localhost (Hardhat) or Kovan Test Network
+
+* **Markets:** An option to toggle the trading currency pair from UZR / mETH to UZR / mDAI
+
+* **Metamask Connection:** An option to connect your wallet with the app
+
+* **Balance:** An option to see and change by depositing or withdrawing your cryptocurrency from the exchange
+
+* **Order:** An option to place a new buy order or sell order on the exchange for the whole order
+
+* **My History:** An option to see your open orders as well as your open past trades. You can cancel your open orders as well.
+
+* **Public Trading History:** An option to see what trades public has made recently.
+
+* **Order Book:** An option to see all open public orders that can be filled by anyone.
