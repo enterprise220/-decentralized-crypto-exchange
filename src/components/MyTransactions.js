@@ -1,9 +1,10 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { MyTransactionsSelector } from "../redux/selectors";
 import { MyOrdersSelector } from "../redux/selectors";
 import Banner from "./Banner";
 import sort from "../assets/img/sort.svg";
 import { useRef, useState } from "react";
+import { cancelOrder } from "../redux/action_and_dispatch";
 
 const MyTransactions = () => {
   const myOpenOrders = useSelector(MyTransactionsSelector);
@@ -11,6 +12,24 @@ const MyTransactions = () => {
   const orderRef = useRef();
   const tradesRef = useRef();
   const [showOrders, setShowOrders] = useState(true);
+
+  const account = useSelector((state) => {
+    return state.provider.account;
+  });
+
+  const symbols = useSelector((state) => {
+    return state.CC.symbols;
+  });
+
+  const provider = useSelector((state) => {
+    return state.provider.connection;
+  });
+  
+  const exchange = useSelector((state) => {
+    return state.exchange.exchange;
+  });
+
+  const dispatch = useDispatch();
   
   const toggleClasses = (e) => {
     if (e.target.className === "tab") {
@@ -26,13 +45,9 @@ const MyTransactions = () => {
     }
   };
 
-  const account = useSelector((state) => {
-    return state.provider.account;
-  });
-
-  const symbols = useSelector((state) => {
-    return state.CC.symbols;
-  });
+  const cancelHandler = async (orderID) => {
+    await cancelOrder(orderID, dispatch, provider, exchange);
+  }
 
   return (
     <div className="component exchange__transactions">
@@ -63,12 +78,12 @@ const MyTransactions = () => {
               <thead>
                 <tr>
                   <th>
-                    {" "}
-                    {symbols[0]} <img src={sort} alt="Sort" />{" "}
+                    
+                    {symbols[0]} <img src={sort} alt="Sort" />
                   </th>
                   <th>
-                    {" "}
-                    {symbols[0]} / {symbols[1]} <img src={sort} alt="Sort" />{" "}
+                    
+                    {symbols[0]} / {symbols[1]} <img src={sort} alt="Sort" />
                   </th>
                   <th> Actions </th>
                 </tr>
@@ -79,12 +94,12 @@ const MyTransactions = () => {
                     return (
                       <tr key={index}>
                         <td style={{ color: singleOrder.color }}>
-                          {" "}
-                          {singleOrder.amountTokenZero}{" "}
+                          
+                          {singleOrder.amountTokenZero}
                         </td>
                         <td> {singleOrder.tokenPrice} </td>
                         <td>
-                          <button className="button"> Cancel </button>
+                          <button onClick = { () => cancelHandler(singleOrder.id) } className="button--sm"> Cancel </button>
                         </td>
                       </tr>
                     );

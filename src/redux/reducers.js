@@ -170,6 +170,45 @@ function exchange(state = DEFAULT_EXCHANGE_REDUX_STATE, action) {
             isSuccessful: false
           },
         };
+      
+      case "CANCEL_ORDER_REQUEST":
+        return {
+          ...state,
+          transaction: {
+            transactionType: "Cancel",
+            isPending: true,
+            isSuccessful: false
+          },
+        };
+
+      case "CANCEL_ORDER_SUCCESSFUL":
+        return {
+          ...state,
+          transaction: {
+            transactionType: "Cancel",
+            isPending: false,
+            isSuccessful: true
+          },
+          cancelledOrders: {
+            ...state.cancelledOrders, 
+            data: [
+              ...state.cancelledOrders.data,
+              action.order
+            ]
+          },
+          events: [ action.event, ...state.events ]
+        };
+      
+      case "CANCEL_ORDER_FAILED":
+        return {
+          ...state,
+          transaction: {
+            transactionType: "Cancel",
+            isPending: false,
+            isSuccessful: false, 
+            isError: true
+          },
+        };
 
       case "NEW_ORDER_FAILED":
         return {

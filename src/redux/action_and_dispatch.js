@@ -137,6 +137,16 @@ function subscribeToEvents(exchange, dispatch) {
       order: order
     });
   });
+ 
+  exchange.on("Cancel", (orderID, user, tokenGive, amountGive, tokenGet, amountGet, time, event) => {    
+    const order = event.args;
+
+    dispatch({
+      type: "CANCEL_ORDER_SUCCESSFUL", 
+      order: order,
+      event: event
+    });
+  });
 }
 
 async function loadBalances(cc, exchange, account, dispatch) {
@@ -267,7 +277,7 @@ async function loadAllOrders(provider, dispatch, exchange) {
   /*
     Get all "Make" orders through the "Make" event.
   */
-  
+ 
   let allOrders = await exchange.queryFilter("Make", 0, block); 
   allOrders = allOrders.map((event) => {
     return event.args;
@@ -299,9 +309,26 @@ async function loadAllOrders(provider, dispatch, exchange) {
   });
 }
 
+async function cancelOrder(orderID, dispatch, provider, exchange) {
+  dispatch({
+    type: "CANCEL_ORDER_REQUEST"
+  });
+
+  try {
+    let signer = provider.getSigner();
+    let transaction = await exchange.connect(signer).cancel(orderID);
+    await transaction.wait();
+  }
+  catch(error) {
+    dispatch({
+      type: "CANCEL_ORDER_FAILED"
+    });
+  }
+}
+
 export {
   loadProvider, loadNetwork, loadAccount,
   loadCryptoCurrencies, loadExchange, loadBalances,
   transferTokens, subscribeToEvents, makeBuyOrder,
-  makeSellOrder, loadAllOrders
+  makeSellOrder, loadAllOrders, cancelOrder
 };
