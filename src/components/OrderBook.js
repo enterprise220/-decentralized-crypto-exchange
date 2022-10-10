@@ -1,6 +1,7 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import sort from "../assets/img/sort.svg";
 import { orderBookSelector } from "../redux/selectors";
+import { fillOrder } from "../redux/action_and_dispatch";
 
 const OrderBook = () => {
   const symbols = useSelector((state) => {
@@ -16,6 +17,21 @@ const OrderBook = () => {
   const cancelledOrders = useSelector((state) => {
     return state.exchange.cancelledOrders.data
   });
+
+  const provider = useSelector((state) => {
+    return state.provider.connection;
+  });
+  
+  const exchange = useSelector((state) => {
+    return state.exchange.exchange;
+  });
+
+  const dispatch = useDispatch();
+  
+
+  const fillOrderHandler = async (orderID) => {
+    await fillOrder(orderID, dispatch, provider, exchange);
+  }
   
   return (
     <div className="component exchange__orderbook">
@@ -40,7 +56,7 @@ const OrderBook = () => {
               {
                 orderBook[0].map((singleOrder, index) => {
                   return(
-                    <tr key = { singleOrder.id }>
+                    <tr key = { singleOrder.id } onClick = { () => fillOrderHandler(singleOrder.id) }>
                       <td> { singleOrder.amountTokenZero } </td>
                       <td style = {{ color: singleOrder.color }}> { singleOrder.tokenPrice } </td>
                       <td> { singleOrder.amountTokenOne } </td>
@@ -71,7 +87,7 @@ const OrderBook = () => {
             {
               orderBook[1].map((singleOrder) => {
                 return(
-                  <tr key = { singleOrder.id }>
+                  <tr key = { singleOrder.id } onClick = { () => fillOrderHandler(singleOrder.id) }>
                     <td> { singleOrder.amountTokenZero } </td>
                     <td style = {{ color: singleOrder.color }}> { singleOrder.tokenPrice } </td>
                     <td> { singleOrder.amountTokenOne } </td>

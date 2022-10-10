@@ -147,6 +147,16 @@ function subscribeToEvents(exchange, dispatch) {
       event: event
     });
   });
+
+  exchange.on("Trade", (orderID, maker, filler, tokenGive, amountGive, tokenGet, amountGet, time, event) => {    
+    const trade = event.args;
+
+    dispatch({
+      type: "TRADE_SUCCESSFUL", 
+      order: trade,
+      event: event
+    });
+  });
 }
 
 async function loadBalances(cc, exchange, account, dispatch) {
@@ -326,9 +336,26 @@ async function cancelOrder(orderID, dispatch, provider, exchange) {
   }
 }
 
+async function fillOrder(orderID, dispatch, provider, exchange) {
+  dispatch({
+    type: "TRADE_REQUEST"
+  });
+
+  try {
+    let signer = provider.getSigner();
+    let transaction = await exchange.connect(signer).fill(orderID);
+    await transaction.wait();
+  }
+  catch(error) {
+    dispatch({
+      type: "TRADE_FAILED"
+    });
+  }
+}
+
 export {
   loadProvider, loadNetwork, loadAccount,
   loadCryptoCurrencies, loadExchange, loadBalances,
   transferTokens, subscribeToEvents, makeBuyOrder,
-  makeSellOrder, loadAllOrders, cancelOrder
+  makeSellOrder, loadAllOrders, cancelOrder, fillOrder
 };

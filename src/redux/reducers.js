@@ -180,6 +180,16 @@ function exchange(state = DEFAULT_EXCHANGE_REDUX_STATE, action) {
             isSuccessful: false
           },
         };
+      
+        case "TRADE_REQUEST":
+        return {
+          ...state,
+          transaction: {
+            transactionType: "Trade",
+            isPending: true,
+            isSuccessful: false
+          },
+        };
 
       case "CANCEL_ORDER_SUCCESSFUL":
         return {
@@ -199,11 +209,40 @@ function exchange(state = DEFAULT_EXCHANGE_REDUX_STATE, action) {
           events: [ action.event, ...state.events ]
         };
       
+      case "TRADE_SUCCESSFUL":
+        return {
+          ...state,
+          transaction: {
+            transactionType: "Trade",
+            isPending: false,
+            isSuccessful: true
+          },
+          filledOrders: {
+            ...state.filledOrders, 
+            data: [
+              ...state.filledOrders.data,
+              action.order
+            ]
+          },
+          events: [ action.event, ...state.events ]
+        };
+      
       case "CANCEL_ORDER_FAILED":
         return {
           ...state,
           transaction: {
             transactionType: "Cancel",
+            isPending: false,
+            isSuccessful: false, 
+            isError: true
+          },
+        };
+      
+        case "TRADE_FAILED":
+        return {
+          ...state,
+          transaction: {
+            transactionType: "Trade",
             isPending: false,
             isSuccessful: false, 
             isError: true
