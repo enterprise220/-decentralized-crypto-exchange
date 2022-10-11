@@ -42,23 +42,14 @@ const Alert = () => {
             <h1> Transaction Successful! </h1>
               <a href='' target='_blank' rel='noreferrer'> </a>
           </div>
-          : 
-          <div className="alert alert--remove" onClick = { removeAlertHandler } ref = { alertRef }>
-          <h1> Transaction Failed </h1>
-        </div>
+          : (
+            !isPending && !isSuccessful &&
+            <div className="alert alert--remove" onClick = { removeAlertHandler } ref = { alertRef }>
+              <h1> Transaction Failed </h1>
+            </div>
+          )
         )
       }
-
-      {/* {
-        !isPending && !isSuccessful &&
-        <div className="alert alert--remove" ref = { alertRef }>
-          <h1> Transaction Failed </h1>
-        </div>
-      } */}
-        
-      
-        
-      
       <div className="alert alert--remove"></div>
     </div>
   );
