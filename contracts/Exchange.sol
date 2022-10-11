@@ -222,6 +222,11 @@ contract Exchange {
         uint256 feeAmount = (fetchedOrder.amountGet * feePercent) / 100;
 
         require(
+            fetchedOrder.user != msg.sender,
+            "ERROR: You cannot fill your own order."
+        );
+        
+        require(
             !cancelledOrders[_orderID],
             "ERROR: This order has been cancelled by the maker. Therefore, it cannot be filled out."
         );
