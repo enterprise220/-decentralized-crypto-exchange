@@ -64,3 +64,5 @@ At the front end, we used React.js, Redux, MetaMask and Ethers.js in order to cr
 * **Order Book:** An option to see all open public orders that can be filled by anyone.
 
 * **Candlestick Chart:** A chart that captures the opening, closing, high and low values of the trades for a specific currency pairt (market) at a specific hour. We implementd this using MOMENT library and APEX CHARTS library for React.js.
+
+* **Transaction Alerts:** Also, to make our project really professional and compliant with modern standards, we added an alert feature. A pop up that shows up at the corner of the screen whenever you are engaged in any kind of transaction, i.e., make, cancel, fill, deposit, withdraw etc., really uplifts the UX. Also, the pop up shows any errors to the users as well, so that they can know what went wrong and whose end.
