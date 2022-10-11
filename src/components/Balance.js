@@ -138,7 +138,7 @@ const Balance = () => {
             depositWithdrawHandler(e, contracts[0]) 
           }}
         >
-          <label htmlFor="token0"><small> Deposit { symbols ? symbols[0] : "" } Amount </small></label>
+          <label htmlFor="token0"><small> Enter { symbols ? symbols[0] : "" } Amount </small></label>
           <input type = "text" id = "token0" value = { token1ExchangeBalance } placeholder = "0.0000" onChange = {
             (e) => {
               amountHandler(e, contracts[0]);
@@ -180,7 +180,7 @@ const Balance = () => {
             depositWithdrawHandler(e, contracts[1]) 
           }}
         >
-          <label htmlFor="token1"><small> Deposit { symbols ? symbols[1] : "" } Amount </small></label>
+          <label htmlFor="token1"><small> Enter { symbols ? symbols[1] : "" } Amount </small></label>
           <input type = "text" id = "token1" value = { token2ExchangeBalance } placeholder = "0.0000" onChange = {
             (e) => {
               amountHandler(e, contracts[1]);

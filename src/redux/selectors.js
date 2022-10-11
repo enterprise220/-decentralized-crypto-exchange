@@ -1,5 +1,5 @@
 import { createSelector } from "reselect";
-import { get, groupBy, reject, maxBy, minBy } from "lodash";
+import { get, groupBy, reject, maxBy, minBy, create } from "lodash";
 import { ethers } from "ethers";
 import moment from "moment";
 
@@ -8,10 +8,22 @@ const allOrders = state => get(state, "exchange.allOrders.data", []);
 const cancelledOrders = state => get(state, "exchange.cancelledOrders.data", []);
 const filledOrders = state => get(state, "exchange.filledOrders.data", []);
 const account = state => get(state, "provider.account", undefined);
+const events = state => get(state, "exchange.events", []);
 
 const getOrderType = (order, tokens) => {
   return(order.tokenGive === tokens[1].address ? "Buy" : "Sell");
 }
+
+export const myEventSelector = createSelector(account, events, (account, events) => {
+  if (account) {
+    let metamaskActiveUser = ethers.utils.getAddress(account);
+    
+    events = events.filter((event) => {
+      return event.args.user === metamaskActiveUser;
+    });
+    return events;
+  }
+});
 
 const openOrders = state => {
   const all = allOrders(state);
