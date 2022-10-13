@@ -32,22 +32,19 @@ const Markets = () => {
           <option
             value={`${config[chainID].UZR.address},${config[chainID].mETH.address}`}
           >
-            {" "}
-            UZR / mETH{" "}
+            UZR / mETH
           </option>
           <option
             value={`${config[chainID].UZR.address},${config[chainID].mDAI.address}`}
           >
-            {" "}
-            UZR / mDAI{" "}
+            UZR / mDAI
           </option>
         </select>
       ) : (
         <em>
           <small>
-            {" "}
             UZR crypto currency not deployed to this netowrk. No markets to
-            show. Try changing the network from above.{" "}
+            show. Try changing the network from above.
           </small>
         </em>
       )}

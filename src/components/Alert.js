@@ -42,14 +42,14 @@ const Alert = () => {
         isPending
         ?          
           <div className="alert alert--remove" onClick = { removeAlertHandler } ref = { alertRef }>
-          <img style = {{ position: "absolute", right: "5%", marginBottom: "20%" }} src = { close } />
+          <img style = {{ position: "absolute", right: "5%", marginBottom: "20%" }} src = { close } alt = "Close Alert" />
           <h1> Transaction Pending... </h1>
         </div>
         : (
           !isPending && isSuccessfull
           ?
           <div className="alert alert--remove" onClick = { removeAlertHandler } ref = { alertRef }>
-            <img style = {{ position: "absolute", right: "5%", marginBottom: "20%" }} src = { close } />
+            <img style = {{ position: "absolute", right: "5%", marginBottom: "20%" }} src = { close } alt = "Close Alert" />
             <h1> Transaction Successful! </h1>
               <a href = { 
                 config[network] 
@@ -65,7 +65,7 @@ const Alert = () => {
           : (
             !isPending && !isSuccessfull &&
             <div className="alert alert--remove" onClick = { removeAlertHandler } ref = { alertRef }>
-              <img style = {{ position: "absolute", right: "5%", marginBottom: "20%" }} src = { close } />
+              <img style = {{ position: "absolute", right: "5%", marginBottom: "20%" }} src = { close } alt = "Close Alert" />
               <h1> Transaction Failed </h1>
             </div>
           )

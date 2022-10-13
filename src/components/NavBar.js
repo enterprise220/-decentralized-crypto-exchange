@@ -63,20 +63,18 @@ function NavBar() {
             onChange={changeNetwork}
           >
             <option value="0" disabled>
-              {" "}
-              Select Netowrk{" "}
+              Select Netowrk
             </option>
             <option value="0x7A69"> Localhost - 31337 </option>
-            <option value="0x2a"> Kovan - 42 </option>
+            <option value="0x5"> Goerli - 5 </option>
           </select>
         )}
       </div>
 
       <div className="exchange__header--account flex">
         <p>
-          {" "}
-          <small> My Balance: </small>{" "}
-          {balance ? Number(balance).toFixed(4) : "0"} ETH{" "}
+          <small> My Balance: </small>
+          {balance ? Number(balance).toFixed(4) : "0"} ETH
         </p>
 
         {account ? (
@@ -89,7 +87,6 @@ function NavBar() {
             target="_blank"
             rel="noreferrer"
           >
-            {" "}
             {truncateEthAddress(account)}
             <Blockies
               seed={account}
@@ -103,8 +100,7 @@ function NavBar() {
           </a>
         ) : (
           <button className="button" onClick={connect}>
-            {" "}
-            Connect{" "}
+            Connect
           </button>
         )}
       </div>
