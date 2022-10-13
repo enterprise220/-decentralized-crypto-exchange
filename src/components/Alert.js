@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { myEventSelector } from "../redux/selectors";
 import truncateEthAddress from "truncate-eth-address";
 import config from "../config.json";
+import close from "../assets/img/close.svg";
 
 const Alert = () => {
   let isPending = useSelector((state) => {
@@ -39,14 +40,16 @@ const Alert = () => {
     <div>
       {
         isPending
-        ?
-        <div className="alert alert--remove" onClick = { removeAlertHandler } ref = { alertRef }>
+        ?          
+          <div className="alert alert--remove" onClick = { removeAlertHandler } ref = { alertRef }>
+          <img style = {{ position: "absolute", right: "5%", marginBottom: "20%" }} src = { close } />
           <h1> Transaction Pending... </h1>
         </div>
         : (
           !isPending && isSuccessfull
           ?
           <div className="alert alert--remove" onClick = { removeAlertHandler } ref = { alertRef }>
+            <img style = {{ position: "absolute", right: "5%", marginBottom: "20%" }} src = { close } />
             <h1> Transaction Successful! </h1>
               <a href = { 
                 config[network] 
@@ -62,6 +65,7 @@ const Alert = () => {
           : (
             !isPending && !isSuccessfull &&
             <div className="alert alert--remove" onClick = { removeAlertHandler } ref = { alertRef }>
+              <img style = {{ position: "absolute", right: "5%", marginBottom: "20%" }} src = { close } />
               <h1> Transaction Failed </h1>
             </div>
           )
