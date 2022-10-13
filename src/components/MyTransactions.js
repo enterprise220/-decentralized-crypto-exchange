@@ -77,14 +77,8 @@ const MyTransactions = () => {
             <table>
               <thead>
                 <tr>
-                  <th>
-                    
-                    {symbols[0]} <img src={sort} alt="Sort" />
-                  </th>
-                  <th>
-                    
-                    {symbols[0]} / {symbols[1]} <img src={sort} alt="Sort" />
-                  </th>
+                  <th> {symbols[0] } <img src={sort} alt="Sort" /> </th>
+                    <th> {symbols[0] && symbols[0]} { symbols[0] && symbols[1] && "/" } {symbols[1] && symbols[1]} <img src={sort} alt="Sort" /> </th>
                   <th> Actions </th>
                 </tr>
               </thead>
@@ -94,7 +88,6 @@ const MyTransactions = () => {
                     return (
                       <tr key={index}>
                         <td style={{ color: singleOrder.color }}>
-                          
                           {singleOrder.amountTokenZero}
                         </td>
                         <td> {singleOrder.tokenPrice} </td>
@@ -105,7 +98,7 @@ const MyTransactions = () => {
                     );
                   })
                 ) : (
-                  <Banner text="No orders placed yet." />
+                  <Banner text="No personal orders yet." />
                 )}
               </tbody>
             </table>
@@ -123,7 +116,7 @@ const MyTransactions = () => {
                 <tr>
                   <th> Time <img src={sort} alt="Sort" /> </th>
                   <th> {symbols[0]} <img src={sort} alt="Sort" /> </th>
-                  <th> {symbols[0]} / {symbols[1]} <img src={sort} alt="Sort" /> </th>
+                  <th> {symbols[0]} { symbols[0] && symbols[1] && "/" } {symbols[1]} <img src={sort} alt="Sort" /> </th>
                 </tr>
               </thead>
               <tbody>
@@ -140,7 +133,7 @@ const MyTransactions = () => {
                     );
                   })
                 ) : (
-                  <Banner text="No trades placed yet." />
+                  <Banner text="No personal trades yet." />
                 )}
               </tbody>
             </table>

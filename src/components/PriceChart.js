@@ -20,22 +20,22 @@ const PriceChart = () => {
   return(
     <div className="component exchange__chart">
       <div className='component__header flex-between'>
-        <div className='flex'>
-
-          <h2> { symbols && symbols[0] } / { symbols && symbols[1] } </h2>
-
-          <div className = 'flex'>
-            { 
-              priceChart && priceChart.lastPriceChange === "+" 
-              ?
-              <img src = { ArrowUp } alt = "Arrow up" />
-              : 
-              <img src = { ArrowDown } alt = "Arrow down" />
-            }
-            <span className = 'up'> { priceChart && priceChart.lastPrice } </span>
-          </div>
-
+        {
+          symbols && symbols[0] && symbols[1] &&
+          <div className='flex'>
+            <h2> { symbols[0] } / { symbols[1] } </h2>
+            <div className = 'flex'>
+              { 
+                priceChart && priceChart.lastPriceChange === "+" 
+                ?
+                <img src = { ArrowUp } alt = "Arrow up" />
+                : 
+                <img src = { ArrowDown } alt = "Arrow down" />
+              }
+              <span className = 'up'> { priceChart && priceChart.lastPrice } </span>
+            </div>
         </div>
+        }
       </div>
       {
         account

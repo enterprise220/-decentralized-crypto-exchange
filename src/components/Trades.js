@@ -16,7 +16,7 @@ const Trades = () => {
       </div>
 
       {
-        trades && trades[0] && trades[0].time && symbols
+        symbols && symbols[0] && symbols[1] && trades && trades[0] && trades[0].time
         ?
           <table>
             <thead>
@@ -42,7 +42,7 @@ const Trades = () => {
         </table>
         :
         <Banner text = { 
-          `No Trades for ${ symbols && symbols[0] } / ${ symbols && symbols[1] }` } />
+          `No public trades yet.` } />
       }
     </div>
   );

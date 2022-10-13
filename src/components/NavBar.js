@@ -76,7 +76,7 @@ function NavBar() {
         <p>
           {" "}
           <small> My Balance: </small>{" "}
-          {balance ? Number(balance).toFixed(4) : "?"} ETH{" "}
+          {balance ? Number(balance).toFixed(4) : "0"} ETH{" "}
         </p>
 
         {account ? (
