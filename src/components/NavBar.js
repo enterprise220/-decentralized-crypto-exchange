@@ -65,7 +65,7 @@ function NavBar() {
             <option value="0" disabled>
               Select Netowrk
             </option>
-            <option value="0x7A69"> Localhost - 31337 </option>
+            <option value="0x7A69"> Hardhat - 31337 </option>
             <option value="0x5"> Goerli - 5 </option>
           </select>
         )}
